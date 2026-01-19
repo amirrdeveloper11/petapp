@@ -1,40 +1,14 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:front/core/services/network.dart';
 import 'package:front/core/services/secure_storage_service.dart';
 import 'package:front/features/auth/user/model/user_model.dart';
 
 class AuthServiceDio {
   AuthServiceDio._();
 
-  static final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'http://10.0.2.2:8000/api',
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 5),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    ),
-  )..interceptors.add(_logger);
+  static final Dio _dio = AppDio.dio;
 
-  static final _logger = InterceptorsWrapper(
-    onRequest: (o, h) {
-      debugPrint("➡️ ${o.method} ${o.uri}");
-      h.next(o);
-    },
-    onResponse: (r, h) {
-      debugPrint("✅ ${r.statusCode} ${r.requestOptions.uri}");
-      h.next(r);
-    },
-    onError: (e, h) {
-      debugPrint("❌ ${e.type} ${e.requestOptions.uri}");
-      h.next(e);
-    },
-  );
-
-  // PUBLIC API
 
   static Future<Map<String, dynamic>> register({
     required String name,
@@ -68,12 +42,19 @@ class AuthServiceDio {
     }, saveAuth: true);
   }
 
+  static Future<void> logout() async {
+    try {
+      await _post('/auth/logout', {});
+    } catch (_) {}
+    await SecureStorageService.deleteAll();
+  }
+
+
   static Future<Map<String, dynamic>> updateProfile({
     required String name,
     required String email,
     String? password,
-  }) async {
-    final token = await SecureStorageService.readAccessToken();
+  }) {
     return _post(
       '/auth/update-profile',
       {
@@ -81,26 +62,14 @@ class AuthServiceDio {
         'email': email,
         if (password?.isNotEmpty == true) 'password': password,
       },
-      token: token,
       saveUserOnly: true,
     );
   }
 
   static Future<Map<String, dynamic>> deleteAccount() async {
-    final token = await SecureStorageService.readAccessToken();
-    final res = await _delete('/auth/delete-account', token: token);
+    final res = await _delete('/auth/delete-account');
     await SecureStorageService.deleteAll();
     return res;
-  }
-
-  static Future<void> logout() async {
-    try {
-      final token = await SecureStorageService.readAccessToken();
-      if (token != null) {
-        await _post('/auth/logout', {}, token: token);
-      }
-    } catch (_) {}
-    await SecureStorageService.deleteAll();
   }
 
   static Future<UserModel?> readStoredUser() async {
@@ -109,51 +78,38 @@ class AuthServiceDio {
     return UserModel.fromJson(jsonDecode(jsonStr));
   }
 
-  // CORE REQUEST LAYER
+  
+
   static Future<Map<String, dynamic>> _post(
     String path,
     Map<String, dynamic> data, {
-    String? token,
     bool saveAuth = false,
     bool saveUserOnly = false,
   }) async {
     try {
-      final response = await _dio.post(
-        path,
-        data: data,
-        options: token == null
-            ? null
-            : Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final res = await _dio.post(path, data: data);
 
       if (saveAuth) {
-        await _saveAuth(response.data);
+        await _saveAuth(res.data);
       } else if (saveUserOnly) {
-        await _saveUser(response.data);
+        await _saveUser(res.data);
       }
 
-      return _ok(response);
+      return _ok(res);
     } on DioException catch (e) {
       return _fail(e);
     }
   }
 
-  static Future<Map<String, dynamic>> _delete(
-    String path, {
-    String? token,
-  }) async {
+  static Future<Map<String, dynamic>> _delete(String path) async {
     try {
-      final response = await _dio.delete(
-        path,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      return _ok(response);
+      final res = await _dio.delete(path);
+      return _ok(res);
     } on DioException catch (e) {
       return _fail(e);
     }
   }
 
-  // HELPERS
 
   static Future<void> _saveAuth(Map<String, dynamic> json) async {
     final data = json['data'];
@@ -178,24 +134,14 @@ class AuthServiceDio {
   }
 
   static Map<String, dynamic> _ok(Response r) => {
-    'statusCode': r.statusCode,
-    'body': r.data,
-  };
-
-  static Map<String, dynamic> _fail(DioException e) {
-    if (e.type == DioExceptionType.connectionTimeout ||
-        e.type == DioExceptionType.receiveTimeout ||
-        e.type == DioExceptionType.connectionError) {
-      return {
-        'statusCode': 0,
-        'body': {'message': 'Server unavailable'},
+        'statusCode': r.statusCode,
+        'body': r.data,
       };
-    }
 
-    final data = e.response?.data;
-    return {
-      'statusCode': e.response?.statusCode ?? 500,
-      'body': {'message': data?['message'] ?? 'Server error'},
-    };
-  }
+  static Map<String, dynamic> _fail(DioException e) => {
+        'statusCode': e.response?.statusCode ?? 500,
+        'body': {
+          'message': e.response?.data?['message'] ?? 'Server error',
+        },
+      };
 }

@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: false, // safe for curved Material 3
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
         title: Text(
           _titles[_selectedIndex],

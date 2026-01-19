@@ -2,18 +2,16 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens; // ✅ This import was missing
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable; // ✅ Trait now works
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
@@ -23,8 +21,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var list<string>
      */
     protected $hidden = [
@@ -32,9 +28,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     */
+
     protected function casts(): array
     {
         return [
@@ -43,11 +37,14 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Relationship: user can have many refresh tokens
-     */
+
     public function refreshTokens()
     {
         return $this->hasMany(RefreshToken::class);
     }
+    public function pets()
+{
+    return $this->hasMany(Pet::class);
+}
+
 }

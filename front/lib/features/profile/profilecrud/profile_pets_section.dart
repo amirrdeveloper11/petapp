@@ -1,15 +1,30 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:front/features/petcrud/pet_list_screen.dart';
 import 'package:front/features/petcrud/provider/pet_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:front/core/theme.dart';
 
-class ProfilePetsSection extends StatelessWidget {
+class ProfilePetsSection extends StatefulWidget {
   const ProfilePetsSection({super.key});
 
   @override
+  State<ProfilePetsSection> createState() => _ProfilePetsSectionState();
+}
+
+class _ProfilePetsSectionState extends State<ProfilePetsSection> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PetProvider>().fetchPets();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final pets = context.watch<PetProvider>().pets;
+    final provider = context.watch<PetProvider>();
+    final pets = provider.pets;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -19,6 +34,7 @@ class ProfilePetsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -38,11 +54,15 @@ class ProfilePetsSection extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            if (pets.isEmpty)
+
+            // Pets Listt
+            if (provider.loading)
+              const Center(child: CircularProgressIndicator())
+            else if (pets.isEmpty)
               const Text("No pets added", style: TextStyle(color: Colors.grey))
             else
               SizedBox(
-                height: 90,
+                height: 110,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: pets.length,
@@ -50,23 +70,39 @@ class ProfilePetsSection extends StatelessWidget {
                   itemBuilder: (_, i) {
                     final pet = pets[i];
                     return Container(
-                      width: 120,
+                      width: 100,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryGreen.withOpacity(0.1),
+                        color: Colors.green.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.pets),
-                            Text(pet.name),
-                            Text(
-                              "${pet.age} y",
-                              style: const TextStyle(fontSize: 12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: _buildPetImage(pet.imagePath),
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            pet.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "${pet.age} y",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -76,5 +112,14 @@ class ProfilePetsSection extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildPetImage(String? path) {
+    if (path == null) return const Center(child: Icon(Icons.pets, size: 40));
+    if (path.startsWith('http')) return Image.network(path, fit: BoxFit.cover);
+    final file = File(path);
+    return file.existsSync()
+        ? Image.file(file, fit: BoxFit.cover)
+        : const Center(child: Icon(Icons.broken_image));
   }
 }

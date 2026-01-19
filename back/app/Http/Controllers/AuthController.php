@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Register
+
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -38,7 +38,15 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // ✅ Login
+
+
+
+
+
+
+
+    
+
     public function login(Request $request)
     {
         $validated = $request->validate([
@@ -67,7 +75,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // ✅ Refresh
     public function refresh(Request $request)
     {
         $validated = $request->validate([
@@ -80,7 +87,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid or expired refresh token'], 401);
         }
 
-        // Optional: Sliding expiration
         $refreshToken->update(['expires_at' => now()->addDays(7)]);
 
         $user = $refreshToken->user;
@@ -97,12 +103,10 @@ class AuthController extends Controller
         ]);
     }
 
-    // ✅ Logout
     public function logout(Request $request)
     {
         $user = $request->user();
 
-        // Revoke all tokens
         $user->tokens()->delete();
         RefreshToken::where('user_id', $user->id)->update(['revoked' => true]);
 
@@ -138,16 +142,13 @@ class AuthController extends Controller
         ]);
     }
 
-    // ✅ Delete Account
     public function deleteAccount(Request $request)
     {
         $user = $request->user();
 
-        // Revoke all tokens
         $user->tokens()->delete();
         RefreshToken::where('user_id', $user->id)->update(['revoked' => true]);
 
-        // Delete user
         $user->delete();
 
         return response()->json([

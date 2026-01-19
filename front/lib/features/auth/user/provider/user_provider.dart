@@ -13,7 +13,6 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Update profile
   Future<void> updateProfile({required String name, required String email, String? password}) async {
     if (_user == null) return;
 
@@ -28,14 +27,12 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-  // Logout
   Future<void> logout() async {
     _user = null;
     notifyListeners();
     await AuthServiceDio.logout();
   }
 
-  // Delete account
   Future<void> deleteAccount() async {
     _user = null;
     notifyListeners();

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/theme.dart';
-import 'package:front/features/petcrud/model/pet_constants.dart';
-import 'package:front/features/petcrud/model/pet_model.dart';
-import 'package:front/features/petcrud/provider/pet_provider.dart';
-import 'package:front/widgets/custom_button.dart';
-import 'package:front/widgets/custom_pdropdown.dart';
+import 'package:front/widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
+import 'package:front/core/theme.dart';
+import 'package:front/widgets/custom_button.dart';
+import 'package:front/features/petcrud/provider/pet_provider.dart';
+import 'package:front/features/petcrud/model/pet_model.dart';
 import 'pet_image_picker.dart';
 
 class AddEditPetScreen extends StatefulWidget {
@@ -17,29 +16,16 @@ class AddEditPetScreen extends StatefulWidget {
 }
 
 class _AddEditPetScreenState extends State<AddEditPetScreen> {
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   final nameCtrl = TextEditingController();
+  final typeCtrl = TextEditingController();
+  final breedCtrl = TextEditingController();
   final weightCtrl = TextEditingController();
 
-  String? type;
-  String? breed;
   String? imagePath;
   DateTime? birthDate;
   String gender = 'Male';
-
-  List<String> get breeds {
-    switch (type) {
-      case 'Dog':
-        return dogBreeds;
-      case 'Cat':
-        return catBreeds;
-      case 'Bird':
-        return birdBreeds;
-      default:
-        return [];
-    }
-  }
 
   @override
   void initState() {
@@ -47,9 +33,9 @@ class _AddEditPetScreenState extends State<AddEditPetScreen> {
     final p = widget.pet;
     if (p != null) {
       nameCtrl.text = p.name;
+      typeCtrl.text = p.type;
+      breedCtrl.text = p.breed;
       weightCtrl.text = p.weight.toString();
-      type = p.type;
-      breed = p.breed;
       imagePath = p.imagePath;
       birthDate = p.birthDate;
       gender = p.gender;
@@ -57,12 +43,25 @@ class _AddEditPetScreenState extends State<AddEditPetScreen> {
   }
 
   @override
+  void dispose() {
+    nameCtrl.dispose();
+    typeCtrl.dispose();
+    breedCtrl.dispose();
+    weightCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = context.read<PetProvider>();
+
     return Scaffold(
-      appBar: AppBar(title: Text(widget.pet == null ? 'Add Pet' : 'Edit Pet')),
+      appBar: AppBar(
+        title: Text(widget.pet == null ? 'Add Pet' : 'Edit Pet'),
+        backgroundColor: AppColors.primaryGreen,
+      ),
       body: Form(
-        key: formKey,
+        key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
@@ -72,46 +71,41 @@ class _AddEditPetScreenState extends State<AddEditPetScreen> {
                 onPicked: (path) => setState(() => imagePath = path),
               ),
             ),
-
             const SizedBox(height: 24),
 
-            TextFormField(
+            CustomTextField(
               controller: nameCtrl,
-              decoration: const InputDecoration(labelText: 'Pet Name'),
+              hintText: 'Pet Name',
               validator: (v) => v!.isEmpty ? 'Required' : null,
             ),
-
             const SizedBox(height: 16),
 
-            CustomM3Dropdown<String>(
-              label: 'Pet Type',
-              value: type,
-              items: petTypes,
-              labelBuilder: (e) => e,
-              onChanged: (v) {
-                setState(() {
-                  type = v;
-                  breed = null;
-                });
-              },
+            CustomTextField(
+              controller: typeCtrl,
+              hintText: 'Pet Type',
+              validator: (v) => v!.isEmpty ? 'Required' : null,
             ),
-
             const SizedBox(height: 16),
 
-            CustomM3Dropdown<String>(
-              label: 'Breed',
-              value: breed,
-              items: breeds,
-              labelBuilder: (e) => e,
-              onChanged: (v) => setState(() => breed = v),
+            // Breed
+            CustomTextField(
+              controller: breedCtrl,
+              hintText: 'Breed',
+              validator: (v) => v!.isEmpty ? 'Required' : null,
             ),
-
             const SizedBox(height: 16),
 
-            TextFormField(
+            // Weight
+            CustomTextField(
               controller: weightCtrl,
+              hintText: 'Weight (kg)',
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Weight (kg)'),
+              validator: (v) {
+                if (v == null || v.isEmpty) return null;
+                final n = double.tryParse(v);
+                if (n == null) return 'Invalid number';
+                return null;
+              },
             ),
             const SizedBox(height: 16),
 
@@ -129,11 +123,8 @@ class _AddEditPetScreenState extends State<AddEditPetScreen> {
                 ),
               ],
               selected: {gender},
-              onSelectionChanged: (v) {
-                setState(() => gender = v.first);
-              },
+              onSelectionChanged: (v) => setState(() => gender = v.first),
             ),
-
             const SizedBox(height: 16),
 
             ListTile(
@@ -160,36 +151,35 @@ class _AddEditPetScreenState extends State<AddEditPetScreen> {
                   context: context,
                   firstDate: DateTime(2000),
                   lastDate: DateTime.now(),
+                  initialDate: birthDate ?? DateTime.now(),
                 );
                 if (date != null) setState(() => birthDate = date);
               },
             ),
-
             const SizedBox(height: 32),
 
             CustomButton(
               text: widget.pet == null ? 'Add Pet' : 'Update Pet',
               onPressed: () {
-                if (!formKey.currentState!.validate() ||
-                    type == null ||
-                    breed == null ||
-                    birthDate == null)
+                if (!_formKey.currentState!.validate() || birthDate == null)
                   return;
 
                 final pet = PetModel(
-                  id: widget.pet?.id ?? provider.generateId(),
-                  name: nameCtrl.text,
-                  type: type!,
-                  breed: breed!,
-                  birthDate: birthDate!,
-                  gender: gender,
+                  id: widget.pet?.id ?? 0,
+                  name: nameCtrl.text.trim(),
+                  type: typeCtrl.text.trim(),
+                  breed: breedCtrl.text.trim(),
                   weight: double.tryParse(weightCtrl.text) ?? 0,
+                  gender: gender,
+                  birthDate: birthDate!,
                   imagePath: imagePath,
                 );
 
-                widget.pet == null
-                    ? provider.addPet(pet)
-                    : provider.updatePet(pet.id, pet);
+                if (widget.pet == null) {
+                  provider.addPet(pet);
+                } else {
+                  provider.updatePet(pet.id, pet);
+                }
 
                 Navigator.pop(context);
               },

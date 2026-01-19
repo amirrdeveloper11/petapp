@@ -23,15 +23,4 @@ class UserModel {
         'email': email,
       };
 
-  UserModel copyWith({
-    String? fullName,
-    String? email,
-    String? imagePath,
-  }) {
-    return UserModel(
-      id: id,
-      fullName: fullName ?? this.fullName,
-      email: email ?? this.email,
-    );
-  }
 }

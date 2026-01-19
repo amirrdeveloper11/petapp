@@ -14,7 +14,6 @@ class ProfileSection extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Profile Card
           Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),

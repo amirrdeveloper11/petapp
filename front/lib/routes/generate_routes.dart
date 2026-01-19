@@ -19,7 +19,6 @@ class GenerateRoutes {
       case AppRoutes.homeScreen:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
 
-      // Section routes
       case AppRoutes.storeSection:
         return MaterialPageRoute(builder: (_) => const StoreSection());
       case AppRoutes.profileSection:

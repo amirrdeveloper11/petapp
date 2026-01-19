@@ -29,10 +29,12 @@ class SplashProvider with ChangeNotifier {
       return;
     }
 
-    final res = await AuthServiceDio.refreshToken(refreshToken: refreshToken);
+    final result = await AuthServiceDio.refreshToken(
+      refreshToken: refreshToken,
+    );
 
-    if (res['statusCode'] == 200) {
-      final data = res['body']['data'];
+    if (result['statusCode'] == 200) {
+      final data = result['body']['data'];
       if (data != null && data['user'] != null && context.mounted) {
         final user = UserModel.fromJson(data['user']);
         context.read<UserProvider>().setUser(user);
@@ -42,7 +44,7 @@ class SplashProvider with ChangeNotifier {
       } else {
         _goToLogin(context);
       }
-    } else if (res['statusCode'] == 401) {
+    } else if (result['statusCode'] == 401) {
       _goToLogin(context);
     } else {
       state = SplashState.error;

@@ -20,7 +20,6 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Branding section
                 Column(
                   children: [
                     Container(
@@ -54,11 +53,9 @@ class LoginPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 32),
 
-                // Login Form
                 const LoginForm(),
                 const SizedBox(height: 24),
 
-                // Login Button
                 const LoginButton(),
                 const SizedBox(height: 16),
 

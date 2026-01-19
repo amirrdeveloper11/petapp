@@ -17,29 +17,23 @@ class RefreshToken extends Model
         'revoked' => 'boolean',
     ];
 
-    /**
-     * Generate a new refresh token for a given user.
-     */
+
     public static function generate(User $user): self
     {
         return self::create([
             'user_id' => $user->id,
             'token' => Str::random(64),
-            'expires_at' => now()->addDays(7), // 7 days
+            'expires_at' => now()->addDays(7),
         ]);
     }
 
-    /**
-     * Check if the refresh token is expired or revoked.
-     */
+
     public function isExpired(): bool
     {
         return $this->expires_at->isPast() || $this->revoked;
     }
 
-    /**
-     * Relationship: token belongs to a user.
-     */
+  
     public function user()
     {
         return $this->belongsTo(User::class);

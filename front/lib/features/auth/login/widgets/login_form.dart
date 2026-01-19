@@ -22,8 +22,9 @@ class LoginForm extends StatelessWidget {
             keyboardType: TextInputType.emailAddress,
             validator: (v) {
               if (v == null || v.isEmpty) return 'Please enter email';
-              if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}$').hasMatch(v.trim()))
+              if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}$').hasMatch(v.trim())) {
                 return 'Invalid email';
+              }
               return null;
             },
           ),

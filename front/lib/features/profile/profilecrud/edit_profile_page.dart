@@ -42,7 +42,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       password: passwordCtrl.text.isEmpty ? null : passwordCtrl.text,
     );
 
-    // Only navigate if still mounted
     if (!mounted) return;
     Navigator.pop(context);
   }

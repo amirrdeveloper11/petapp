@@ -1,5 +1,5 @@
 class PetModel {
-  final String id;
+  final int id;
   final String name;
   final String type;
   final String breed;
@@ -7,7 +7,6 @@ class PetModel {
   final String gender;
   final double weight;
   final String? imagePath;
-  final String? notes;
 
   PetModel({
     required this.id,
@@ -18,8 +17,32 @@ class PetModel {
     required this.gender,
     required this.weight,
     this.imagePath,
-    this.notes,
   });
+
+  factory PetModel.fromJson(Map<String, dynamic> json) {
+    return PetModel(
+      id: json['id'],
+      name: json['name'],
+      type: json['type'],
+      breed: json['breed'],
+      birthDate: DateTime.parse(json['birth_date']),
+      gender: json['gender'],
+      weight: double.tryParse(json['weight'].toString()) ?? 0,
+      imagePath: json['image_path'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'type': type,
+      'breed': breed,
+      'birth_date': birthDate.toIso8601String(),
+      'gender': gender.toLowerCase(),
+      'weight': weight,
+      'image_path': imagePath,
+    };
+  }
 
   int get age {
     final now = DateTime.now();

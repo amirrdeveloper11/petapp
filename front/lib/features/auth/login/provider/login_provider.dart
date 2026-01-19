@@ -40,7 +40,6 @@ class LoginProvider with ChangeNotifier {
           final user = UserModel.fromJson(userMap);
           Provider.of<UserProvider>(context, listen: false).setUser(user);
         } else {
-          // try read stored
           final stored = await AuthServiceDio.readStoredUser();
           if (stored != null) {
             Provider.of<UserProvider>(context, listen: false).setUser(stored);
@@ -50,9 +49,7 @@ class LoginProvider with ChangeNotifier {
         if (!context.mounted) return;
         Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
       } else {
-        // print the error details
         debugPrint('[LOGIN] Non-200 response: $body');
-        // optionally show a snackbar
         if (context.mounted) {
           final message = (body['message'] ?? 'Login failed').toString();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
@@ -70,9 +67,6 @@ class LoginProvider with ChangeNotifier {
     }
   }
 
-  void goToRegister(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.registerScreen);
-  }
 
   @override
   void dispose() {
