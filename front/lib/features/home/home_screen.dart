@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/theme.dart';
+import 'package:front/features/store/sections/store_section.dart';
+import 'package:provider/provider.dart';
+
+import 'package:front/features/homepage/home_page_section.dart';
+import 'package:front/features/homepage/provider/home_provider.dart';
 import 'package:front/features/profile/profile_section.dart';
-import 'package:front/features/store/store_section.dart';
 import 'package:front/features/vet/vet_section.dart';
+import 'package:front/routes/app_routes.dart';
 import 'package:front/widgets/custom_bottom_navbar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,41 +18,48 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  int? _storeCategoryId;
+  String _storeSearch = '';
 
-  final List<Widget> _sections = [
-    const StoreSection(),
-    const VetSection(),
-    const ProfileSection(),
-  ];
+  void _changeTab(int index) {
+    setState(() => _selectedIndex = index);
+  }
 
-  final List<String> _titles = ["Store", "Vet Records", "Profile"];
-
-  void _onTabChanged(int index) {
+  void _openStore({int? categoryId, String search = ''}) {
     setState(() {
-      _selectedIndex = index;
+      _storeCategoryId = categoryId;
+      _storeSearch = search;
+      _selectedIndex = 1;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final homeProvider = context.watch<HomeProvider>();
+
     return Scaffold(
-      extendBodyBehindAppBar: false,
-      appBar: AppBar(
-        title: Text(
-          _titles[_selectedIndex],
-          style: const TextStyle(fontWeight: FontWeight.bold),
+      backgroundColor: const Color(0xFFF8F8F8),
+      body: SafeArea(
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: [
+            HomePageSection(onOpenStore: _openStore),
+            StoreSection(
+              products: homeProvider.products,
+              categories: homeProvider.categories,
+              initialCategoryId: _storeCategoryId,
+              initialSearch: _storeSearch,
+              showBackButton: false,
+              onCartTap: () => Navigator.pushNamed(context, AppRoutes.cart),
+            ),
+            const VetSection(),
+            const ProfileSection(),
+          ],
         ),
-        backgroundColor: AppColors.primaryGreen,
-        elevation: 4,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
-        ),
-        centerTitle: true,
       ),
-      body: _sections[_selectedIndex],
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _selectedIndex,
-        onTabChange: _onTabChanged,
+        onTabChange: _changeTab,
       ),
     );
   }
