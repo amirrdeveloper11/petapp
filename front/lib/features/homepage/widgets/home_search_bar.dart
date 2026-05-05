@@ -22,8 +22,8 @@ class HomeSearchBar extends StatelessWidget {
         ],
       ),
       child: TextField(
-        readOnly: true, // 🔥 مهم جداً
-        onTap: onTap, // 🔥 هنا التعديل
+        readOnly: true, 
+        onTap: onTap,
         decoration: InputDecoration(
           hintText: 'Search food, toys, vet...',
           hintStyle: TextStyle(
