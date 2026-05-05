@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:front/features/store/sections/store_section.dart';
 import 'package:provider/provider.dart';
 
+import 'package:front/features/store/sections/store_section.dart';
 import 'package:front/features/homepage/home_page_section.dart';
 import 'package:front/features/homepage/provider/home_provider.dart';
 import 'package:front/features/profile/profile_section.dart';

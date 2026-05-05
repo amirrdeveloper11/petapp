@@ -16,9 +16,4 @@ class ProductDetailsProvider extends ChangeNotifier {
     _quantity--;
     notifyListeners();
   }
-
-  void reset() {
-    _quantity = 1;
-    notifyListeners();
-  }
 }

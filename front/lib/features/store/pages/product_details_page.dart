@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:front/features/homepage/models/product_model.dart';
 import 'package:front/features/homepage/provider/wishlist_provider.dart';
 import 'package:front/features/store/provider/cart_provider.dart';
+import 'package:front/features/store/provider/product_details_provider.dart';
+import 'package:front/features/store/widgets/product_details_actions.dart';
+import 'package:front/features/store/widgets/product_details_header.dart';
+import 'package:front/features/store/widgets/product_details_info.dart';
 import 'package:provider/provider.dart';
-
-import '../provider/product_details_provider.dart';
-import '../widgets/product_details_actions.dart';
-import '../widgets/product_details_header.dart';
-import '../widgets/product_details_info.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final ProductModel product;
@@ -23,10 +22,7 @@ class ProductDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ProductDetailsProvider(),
-      child: _ProductDetailsView(
-        product: product,
-        categoryName: categoryName,
-      ),
+      child: _ProductDetailsView(product: product, categoryName: categoryName),
     );
   }
 }

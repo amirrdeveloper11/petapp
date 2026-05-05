@@ -83,7 +83,6 @@ class CartPage extends StatelessWidget {
       onWillPop: () => _handleBack(context),
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F5F5),
-
         appBar: AppBar(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
@@ -102,7 +101,6 @@ class CartPage extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.w800),
           ),
         ),
-
         body: cart.isEmpty
             ? const AppEmptyState(
                 icon: Icons.shopping_cart_outlined,
@@ -125,7 +123,6 @@ class CartPage extends StatelessWidget {
                   );
                 },
               ),
-
         bottomNavigationBar: cart.isEmpty
             ? null
             : SafeArea(

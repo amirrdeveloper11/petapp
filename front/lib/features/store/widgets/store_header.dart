@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
+import 'package:front/features/store/provider/cart_provider.dart';
+import 'package:front/routes/app_routes.dart';
 import 'package:provider/provider.dart';
-
-import '../../../core/theme.dart';
-import '../pages/cart_page.dart';
-import '../provider/cart_provider.dart';
 
 class StoreHeader extends StatelessWidget {
   final bool showBackButton;
@@ -57,12 +56,10 @@ class StoreHeader extends StatelessWidget {
           isLabelVisible: cartCount > 0,
           label: Text('$cartCount'),
           child: IconButton.filled(
-            onPressed: onCartTap ??
+            onPressed:
+                onCartTap ??
                 () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CartPage()),
-                  );
+                  Navigator.pushNamed(context, AppRoutes.cart);
                 },
             icon: const Icon(Icons.shopping_bag_outlined),
           ),
