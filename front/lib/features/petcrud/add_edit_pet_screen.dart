@@ -87,7 +87,6 @@ class _AddEditPetScreenState extends State<AddEditPetScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Breed
             CustomTextField(
               controller: breedCtrl,
               hintText: 'Breed',
@@ -95,7 +94,6 @@ class _AddEditPetScreenState extends State<AddEditPetScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Weight
             CustomTextField(
               controller: weightCtrl,
               hintText: 'Weight (kg)',

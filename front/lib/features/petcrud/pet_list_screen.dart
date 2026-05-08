@@ -17,7 +17,6 @@ class _PetListScreenState extends State<PetListScreen> {
   @override
   void initState() {
     super.initState();
-    // جلب البيانات بعد بناء الواجهة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PetProvider>().fetchPets();
     });

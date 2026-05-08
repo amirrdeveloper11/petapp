@@ -20,7 +20,6 @@ class PetCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            //Image
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: SizedBox(
@@ -31,7 +30,6 @@ class PetCard extends StatelessWidget {
             ),
             const SizedBox(width: 12),
 
-            // Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +88,6 @@ class PetCard extends StatelessWidget {
     );
   }
 
-  // 🖼 Image helper
   Widget _buildImage(String? path, ColorScheme scheme) {
     if (path == null) {
       return Container(
@@ -113,7 +110,6 @@ class PetCard extends StatelessWidget {
     }
   }
 
-  // ⚡ Chip helper to reduce widget nesting
   Widget _chip(IconData icon, String label) {
     return Chip(
       avatar: Icon(icon, size: 16),

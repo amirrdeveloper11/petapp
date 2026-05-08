@@ -26,7 +26,7 @@ class ProfileSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          // Menu
+          
           Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
