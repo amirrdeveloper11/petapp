@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/services/auth_service.dart';
+import 'package:front/features/auth/auth_service.dart';
 import 'package:front/core/services/secure_storage_service.dart';
 import 'package:front/features/auth/user/model/user_model.dart';
 import 'package:front/features/auth/user/provider/user_provider.dart';
