@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/features/homepage/provider/wishlist_provider.dart';
 import 'package:front/features/homepage/widgets/wishlist_item_card.dart';
-import 'package:front/features/store/widgets/app_empty_state.dart';
+import 'package:front/widgets/app_empty_state.dart';
 import 'package:provider/provider.dart';
 
 class WishlistPage extends StatelessWidget {

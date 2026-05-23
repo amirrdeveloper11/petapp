@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:front/core/theme.dart';
 import 'package:front/features/homepage/models/product_model.dart';

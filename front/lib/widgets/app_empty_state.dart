@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme.dart';
+import '../core/theme.dart';
 
 class AppEmptyState extends StatelessWidget {
   final IconData icon;

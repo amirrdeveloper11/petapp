@@ -5,7 +5,7 @@ import '../../homepage/models/category_model.dart';
 import '../../homepage/models/product_model.dart';
 import '../pages/product_details_page.dart';
 import '../provider/store_provider.dart';
-import '../widgets/app_empty_state.dart';
+import '../../../widgets/app_empty_state.dart';
 import '../widgets/store_category_chips.dart';
 import '../widgets/store_header.dart';
 import '../widgets/store_product_grid.dart';
@@ -145,7 +145,9 @@ class _StoreView extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => ProductDetailsPage(
                                 product: product,
-                                categoryName: _categoryNameFor(product.categoryId),
+                                categoryName: _categoryNameFor(
+                                  product.categoryId,
+                                ),
                               ),
                             ),
                           );

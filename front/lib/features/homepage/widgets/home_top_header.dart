@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 import 'package:front/features/homepage/provider/wishlist_provider.dart';
 import 'package:front/features/homepage/wishlist_page.dart';
 import 'package:provider/provider.dart';
-
-import '../../../core/theme.dart';
 
 class HomeTopHeader extends StatelessWidget {
   const HomeTopHeader({super.key});
@@ -18,9 +17,7 @@ class HomeTopHeader extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => const WishlistPage(),
-            ),
+            MaterialPageRoute(builder: (_) => const WishlistPage()),
           );
         },
         child: Stack(

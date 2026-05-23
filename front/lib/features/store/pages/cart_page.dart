@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/cart_provider.dart';
-import '../widgets/app_empty_state.dart';
+import '../../../widgets/app_empty_state.dart';
 import '../widgets/cart_item_card.dart';
 import '../widgets/cart_summary_bar.dart';
 
