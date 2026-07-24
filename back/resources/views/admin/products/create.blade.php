@@ -47,11 +47,22 @@
                     <input type="file" name="image" class="form-control">
                 </div>
 
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="is_featured" checked>
+                        <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="is_featured"
+                            @checked(old('is_featured', true))>
                         <label class="form-check-label" for="is_featured">
                             Featured
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active"
+                            @checked(old('is_active', true))>
+                        <label class="form-check-label" for="is_active">
+                            Active
                         </label>
                     </div>
                 </div>

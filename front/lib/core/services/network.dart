@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+
+import '../../features/order_checkout/network/api_config.dart';
 import '../services/secure_storage_service.dart';
 
 class AppDio {
   static final Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'http://10.0.2.2:8000/api',
+      baseUrl: '${ApiConfig.baseUrl.replaceAll(RegExp(r'/$'), '')}/api',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),

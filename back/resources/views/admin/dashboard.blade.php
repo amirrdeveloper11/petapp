@@ -1,4 +1,5 @@
 @extends('admin.layouts.app')
+
 @section('title', 'Dashboard')
 
 @section('content')
@@ -8,9 +9,7 @@
 </div>
 
 <div class="row g-3 mb-4">
-
-
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card shadow-sm border-0">
             <div class="card-body">
                 <h6 class="text-muted">Categories</h6>
@@ -19,7 +18,7 @@
         </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card shadow-sm border-0">
             <div class="card-body">
                 <h6 class="text-muted">Products</h6>
@@ -28,7 +27,7 @@
         </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card shadow-sm border-0">
             <div class="card-body">
                 <h6 class="text-muted">Featured Products</h6>
@@ -37,6 +36,14 @@
         </div>
     </div>
 
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="text-muted">Doctors</h6>
+                <h3 class="mb-0">{{ $doctorsCount ?? 0 }}</h3>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="card shadow-sm border-0">
@@ -63,7 +70,6 @@
                     @forelse($latestProducts as $product)
                         <tr>
                             <td>{{ $product->id }}</td>
-
                             <td>
                                 @if($product->image_url)
                                     <img src="{{ $product->image_url }}"
@@ -72,12 +78,10 @@
                                     <span class="text-muted">No image</span>
                                 @endif
                             </td>
-
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->category->name ?? '-' }}</td>
                             <td>{{ number_format($product->price, 2) }}</td>
                             <td>{{ $product->stock }}</td>
-
                             <td>
                                 @if($product->is_featured)
                                     <span class="badge bg-success">Featured</span>
@@ -85,7 +89,6 @@
                                     <span class="badge bg-secondary">Normal</span>
                                 @endif
                             </td>
-
                         </tr>
                     @empty
                         <tr>
@@ -95,7 +98,6 @@
                         </tr>
                     @endforelse
                 </tbody>
-
             </table>
         </div>
     </div>

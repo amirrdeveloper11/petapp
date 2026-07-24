@@ -22,6 +22,7 @@
                     <th width="120">Price</th>
                     <th width="100">Stock</th>
                     <th width="120">Featured</th>
+                    <th width="120">Status</th>
                     <th width="180">Actions</th>
                 </tr>
             </thead>
@@ -49,6 +50,13 @@
                             @endif
                         </td>
                         <td>
+                            @if($product->is_active)
+                                <span class="badge bg-success">Active</span>
+                            @else
+                                <span class="badge bg-danger">Inactive</span>
+                            @endif
+                        </td>
+                        <td>
                             <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-primary">Edit</a>
 
                             <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline">
@@ -62,7 +70,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center py-4 text-muted">No products available.</td>
+                        <td colspan="9" class="text-center py-4 text-muted">No products available.</td>
                     </tr>
                 @endforelse
             </tbody>

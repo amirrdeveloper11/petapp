@@ -17,28 +17,25 @@ class AdminAuthController extends Controller
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required'],
+            'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt($credentials)) {
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->onlyInput('email');
+        $remember = $request->boolean('remember');
+
+        if (Auth::attempt([
+            'email' => $credentials['email'],
+            'password' => $credentials['password'],
+            'role' => 'admin',
+            'is_active' => 1,
+        ], $remember)) {
+            $request->session()->regenerate();
+
+            return redirect()->route('admin.dashboard');
         }
 
-        $request->session()->regenerate();
-
-        if (Auth::user()->role !== 'admin') {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            return back()->withErrors([
-                'email' => 'Unauthorized.',
-            ])->onlyInput('email');
-        }
-
-        return redirect()->route('admin.dashboard');
+        return back()->withErrors([
+            'email' => 'Invalid admin credentials.',
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)

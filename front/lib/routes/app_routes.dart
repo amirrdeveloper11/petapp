@@ -10,4 +10,12 @@ class AppRoutes {
 
   static const String productDetails = 'productDetails';
   static const String cart = 'cart';
+
+  static const String orderCheckout = 'orderCheckout';
+  static const String orderHistory = 'orderHistory';
+  static const String orderDetails = 'orderDetails';
+
+  static const String appointmentHistory = 'appointmentHistory';
+
+  static const String deliveryAddresses = 'deliveryAddresses';
 }

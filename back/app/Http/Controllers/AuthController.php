@@ -1,16 +1,16 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\RefreshToken;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -23,6 +23,8 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'role' => 'user',
+            'is_active' => true,
         ]);
 
         $token = $user->createToken('access_token')->plainTextToken;
@@ -33,19 +35,10 @@ class AuthController extends Controller
             'data' => [
                 'user' => $user,
                 'access_token' => $token,
-                'refresh_token' => $refreshToken->token,
+                'refresh_token' => $refreshToken->plainTextToken,
             ],
         ], 201);
     }
-
-
-
-
-
-
-
-
-    
 
     public function login(Request $request)
     {
@@ -54,11 +47,14 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $validated['email'])->first();
+        $user = User::where('email', $validated['email'])
+            ->where('role', 'user')
+            ->where('is_active', true)
+            ->first();
 
-        if (!$user || !Hash::check($validated['password'], $user->password)) {
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Invalid credentials'],
+                'email' => ['Invalid credentials or unauthorized account type.'],
             ]);
         }
 
@@ -70,7 +66,7 @@ class AuthController extends Controller
             'data' => [
                 'user' => $user,
                 'access_token' => $token,
-                'refresh_token' => $refreshToken->token,
+                'refresh_token' => $refreshToken->plainTextToken,
             ],
         ]);
     }
@@ -81,15 +77,25 @@ class AuthController extends Controller
             'refresh_token' => 'required|string',
         ]);
 
-        $refreshToken = RefreshToken::where('token', $validated['refresh_token'])->first();
+        $refreshToken = RefreshToken::findByPlainToken($validated['refresh_token']);
 
-        if (!$refreshToken || $refreshToken->isExpired()) {
-            return response()->json(['message' => 'Invalid or expired refresh token'], 401);
+        if (! $refreshToken || $refreshToken->isExpired() || $refreshToken->revoked) {
+            return response()->json([
+                'message' => 'Invalid or expired refresh token',
+            ], 401);
         }
 
-        $refreshToken->update(['expires_at' => now()->addDays(7)]);
-
         $user = $refreshToken->user;
+
+        if (! $user || $user->role !== 'user' || ! $user->is_active) {
+            return response()->json([
+                'message' => 'Unauthorized account type',
+            ], 403);
+        }
+
+        $refreshToken->update([
+            'expires_at' => now()->addDays(7),
+        ]);
 
         $accessToken = $user->createToken('access_token')->plainTextToken;
 
@@ -98,7 +104,7 @@ class AuthController extends Controller
             'data' => [
                 'user' => $user,
                 'access_token' => $accessToken,
-                'refresh_token' => $refreshToken->token,
+                'refresh_token' => $request->input('refresh_token'),
             ],
         ]);
     }
@@ -107,14 +113,44 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        $user->tokens()->delete();
-        RefreshToken::where('user_id', $user->id)->update(['revoked' => true]);
+        if (! $user) {
+            return response()->json([
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
 
-        return response()->json(['message' => 'Logged out successfully']);
+        if ($user->role !== 'user') {
+            return response()->json([
+                'message' => 'Unauthorized account type.',
+            ], 403);
+        }
+
+        $user->tokens()->delete();
+
+        RefreshToken::where('user_id', $user->id)->update([
+            'revoked' => true,
+        ]);
+
+        return response()->json([
+            'message' => 'Logged out successfully',
+        ]);
     }
+
     public function updateProfile(Request $request)
     {
         $user = $request->user();
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        if ($user->role !== 'user') {
+            return response()->json([
+                'message' => 'Unauthorized account type.',
+            ], 403);
+        }
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:100',
@@ -122,15 +158,15 @@ class AuthController extends Controller
             'password' => 'sometimes|string|min:6|confirmed',
         ]);
 
-        if (isset($validated['name'])) {
+        if (array_key_exists('name', $validated)) {
             $user->name = $validated['name'];
         }
 
-        if (isset($validated['email'])) {
+        if (array_key_exists('email', $validated)) {
             $user->email = $validated['email'];
         }
 
-        if (isset($validated['password'])) {
+        if (array_key_exists('password', $validated)) {
             $user->password = Hash::make($validated['password']);
         }
 
@@ -138,7 +174,9 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => ['user' => $user],
+            'data' => [
+                'user' => $user,
+            ],
         ]);
     }
 
@@ -146,10 +184,29 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        $user->tokens()->delete();
-        RefreshToken::where('user_id', $user->id)->update(['revoked' => true]);
+        if (! $user) {
+            return response()->json([
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
 
-        $user->delete();
+        if ($user->role !== 'user') {
+            return response()->json([
+                'message' => 'Unauthorized account type.',
+            ], 403);
+        }
+
+        DB::transaction(function () use ($user) {
+            $user->appointments()->delete();
+
+            $user->tokens()->delete();
+
+            RefreshToken::where('user_id', $user->id)->update([
+                'revoked' => true,
+            ]);
+
+            $user->delete();
+        });
 
         return response()->json([
             'status' => 'success',

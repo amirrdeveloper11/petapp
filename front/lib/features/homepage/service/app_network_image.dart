@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../order_checkout/network/api_config.dart';
+
 class AppNetworkImage extends StatelessWidget {
   final String? url;
   final BoxFit fit;
@@ -22,7 +24,8 @@ class AppNetworkImage extends StatelessWidget {
   });
 
   static const String _emulatorHost = '10.0.2.2';
-  static const String _baseUrl = 'http://10.0.2.2:8000';
+
+  static String get _baseUrl => ApiConfig.baseUrl.replaceAll(RegExp(r'/$'), '');
 
   String? _normalize(String? value) {
     if (value == null) return null;

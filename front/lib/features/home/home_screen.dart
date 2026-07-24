@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:front/features/vet/vet_section.dart';
 import 'package:provider/provider.dart';
 
 import 'package:front/features/store/sections/store_section.dart';
 import 'package:front/features/homepage/home_page_section.dart';
 import 'package:front/features/homepage/provider/home_provider.dart';
 import 'package:front/features/profile/profile_section.dart';
-import 'package:front/features/vet/vet_section.dart';
 import 'package:front/routes/app_routes.dart';
 import 'package:front/widgets/custom_bottom_navbar.dart';
 

@@ -4,9 +4,12 @@ import 'package:front/features/auth/splash/provider/splash_provider.dart';
 import 'package:front/features/auth/user/provider/user_provider.dart';
 import 'package:front/features/homepage/provider/home_provider.dart';
 import 'package:front/features/homepage/provider/wishlist_provider.dart';
+import 'package:front/features/locations/provider/delivery_address_provider.dart';
 import 'package:front/features/petcrud/provider/pet_provider.dart';
 import 'package:front/features/store/provider/cart_provider.dart';
 import 'package:front/features/store/provider/store_provider.dart';
+import 'package:front/features/vet/providers/appointment_provider.dart';
+import 'package:front/features/vet/providers/doctor_booking_provider.dart';
 import 'package:front/routes/app_routes.dart';
 import 'package:front/routes/generate_routes.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +27,13 @@ void main() {
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => StoreProvider()),
+        ChangeNotifierProvider(create: (_) => AppointmentProvider()),
+        ChangeNotifierProvider(create: (_) => DeliveryAddressProvider()),
+
+        ChangeNotifierProvider(create: (_) => DoctorBookingProvider()),
         ChangeNotifierProvider(create: (_) => WishlistProvider()..init()),
       ],
+
       child: const MyApp(),
     ),
   );

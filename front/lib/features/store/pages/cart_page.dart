@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/cart_provider.dart';
+import 'package:front/features/store/provider/cart_provider.dart';
+import 'package:front/routes/app_routes.dart';
 import '../../../widgets/app_empty_state.dart';
 import '../widgets/cart_item_card.dart';
 import '../widgets/cart_summary_bar.dart';
@@ -130,7 +131,9 @@ class CartPage extends StatelessWidget {
                 child: CartSummaryBar(
                   subtotal: cart.subTotal,
                   itemCount: cart.totalItemsCount,
-                  onCheckout: () {},
+                  onCheckout: () {
+                    Navigator.pushNamed(context, AppRoutes.orderCheckout);
+                  },
                   onAddMore: () {
                     Navigator.pop(context);
                   },

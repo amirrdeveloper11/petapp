@@ -25,7 +25,12 @@ class PetController extends Controller
             'gender' => 'required|in:male,female',
             'weight' => 'nullable|numeric',
             'image_path' => 'nullable|string',
+            'image' => 'nullable|image|max:5120',
         ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image_path'] = $request->file('image')->store('pets', 'public');
+        }
 
         $pet = $request->user()->pets()->create($validated);
 
@@ -57,7 +62,12 @@ class PetController extends Controller
             'gender' => 'sometimes|in:male,female',
             'weight' => 'nullable|numeric',
             'image_path' => 'nullable|string',
+            'image' => 'nullable|image|max:5120',
         ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image_path'] = $request->file('image')->store('pets', 'public');
+        }
 
         $pet->update($validated);
 

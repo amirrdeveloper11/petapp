@@ -9,25 +9,12 @@ class ProductApiController extends Controller
 {
     public function index()
     {
-        $products = Product::with('category')
+        $products = Product::active()
+            ->with('category')
             ->latest()
             ->get()
-            ->map(function (Product $product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'description' => $product->description,
-                    'price' => (float) $product->price,
-                    'stock' => (int) $product->stock,
-                    'is_featured' => (bool) $product->is_featured,
-                    'category_id' => (int) $product->category_id,
-                    'category' => $product->category ? [
-                        'id' => $product->category->id,
-                        'name' => $product->category->name,
-                    ] : null,
-                    'image_url' => $product->image_url,
-                ];
-            })->values();
+            ->map(fn (Product $product) => $this->formatProduct($product))
+            ->values();
 
         return response()->json([
             'success' => true,
@@ -38,26 +25,13 @@ class ProductApiController extends Controller
 
     public function featured()
     {
-        $products = Product::with('category')
-            ->where('is_featured', true)
+        $products = Product::active()
+            ->featured()
+            ->with('category')
             ->latest()
             ->get()
-            ->map(function (Product $product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'description' => $product->description,
-                    'price' => (float) $product->price,
-                    'stock' => (int) $product->stock,
-                    'is_featured' => (bool) $product->is_featured,
-                    'category_id' => (int) $product->category_id,
-                    'category' => $product->category ? [
-                        'id' => $product->category->id,
-                        'name' => $product->category->name,
-                    ] : null,
-                    'image_url' => $product->image_url,
-                ];
-            })->values();
+            ->map(fn (Product $product) => $this->formatProduct($product))
+            ->values();
 
         return response()->json([
             'success' => true,
@@ -68,25 +42,33 @@ class ProductApiController extends Controller
 
     public function show($id)
     {
-        $product = Product::with('category')->findOrFail($id);
+        $product = Product::active()
+            ->with('category')
+            ->findOrFail($id);
 
         return response()->json([
             'success' => true,
             'message' => 'Product loaded successfully',
-            'data' => [
-                'id' => $product->id,
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => (float) $product->price,
-                'stock' => (int) $product->stock,
-                'is_featured' => (bool) $product->is_featured,
-                'category_id' => (int) $product->category_id,
-                'category' => $product->category ? [
-                    'id' => $product->category->id,
-                    'name' => $product->category->name,
-                ] : null,
-                'image_url' => $product->image_url,
-            ],
+            'data' => $this->formatProduct($product),
         ]);
+    }
+
+    private function formatProduct(Product $product): array
+    {
+        return [
+            'id' => $product->id,
+            'name' => $product->name,
+            'description' => $product->description,
+            'price' => (float) $product->price,
+            'stock' => (int) $product->stock,
+            'is_featured' => (bool) $product->is_featured,
+            'is_active' => (bool) $product->is_active,
+            'category_id' => (int) $product->category_id,
+            'category' => $product->category ? [
+                'id' => $product->category->id,
+                'name' => $product->category->name,
+            ] : null,
+            'image_url' => $product->image_url,
+        ];
     }
 }
