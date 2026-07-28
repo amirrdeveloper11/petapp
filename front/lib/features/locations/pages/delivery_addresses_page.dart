@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/features/locations/model/delivery_address_model.dart';
 import 'package:provider/provider.dart';
-
 import 'package:front/widgets/app_confirm_dialog.dart';
 import 'package:front/widgets/app_empty_state.dart';
 import 'package:front/widgets/custom_button.dart';
@@ -71,6 +70,12 @@ class _DeliveryAddressesPageState extends State<DeliveryAddressesPage> {
               'My Addresses',
               style: TextStyle(fontWeight: FontWeight.w800),
             ),
+          ),
+
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => _openForm(),
+            icon: const Icon(Icons.add_rounded),
+            label: const Text('Add address'),
           ),
 
           body: RefreshIndicator(
