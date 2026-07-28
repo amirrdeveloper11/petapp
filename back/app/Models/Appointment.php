@@ -221,6 +221,7 @@ class Appointment extends Model
             ->get();
 
         $slots = [];
+        $now = Carbon::now();
 
         foreach ($workingHours as $hour) {
             $windowStart = Carbon::createFromFormat(
@@ -237,6 +238,12 @@ class Appointment extends Model
 
             while ($cursor->copy()->addMinutes($slotDurationMinutes)->lessThanOrEqualTo($windowEnd)) {
                 $slotEnd = $cursor->copy()->addMinutes($slotDurationMinutes);
+
+
+                if ($cursor->lessThan($now)) {
+                    $cursor->addMinutes($slotDurationMinutes);
+                    continue;
+                }
 
                 if (static::slotCanBeBooked($doctorProfile, $cursor, $slotEnd, $ignoreAppointmentId, $bookedAppointments)) {
                     $slots[] = [
@@ -299,5 +306,23 @@ class Appointment extends Model
     public function scheduledEnd(): Carbon
     {
         return static::appointmentEnd($this->scheduledStart(), (int) $this->duration_minutes);
+    }
+
+    public function isPastDue(): bool
+    {
+        return $this->scheduledEnd()->lessThan(Carbon::now());
+    }
+
+    public function effectiveStatus(): string
+    {
+        $status = $this->status instanceof AppointmentStatus
+            ? $this->status->value
+            : (string) $this->status;
+
+        if ($this->isActiveBooking() && $this->isPastDue()) {
+            return 'expired';
+        }
+
+        return $status;
     }
 }

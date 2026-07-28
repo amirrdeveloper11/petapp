@@ -10,6 +10,7 @@ class AppStatusChip extends StatelessWidget {
     final normalized = status.trim().toLowerCase();
     final cs = Theme.of(context).colorScheme;
 
+    if (normalized.contains('expired')) return cs.outline;
     if (normalized.contains('cancel')) return cs.error;
     if (normalized.contains('complete') || normalized.contains('done')) {
       return Colors.green;

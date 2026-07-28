@@ -12,6 +12,7 @@
         'completed' => 'success',
         'rejected' => 'danger',
         'cancelled' => 'secondary',
+        'expired' => 'dark',
     ];
 @endphp
 
@@ -21,25 +22,37 @@
     <ul class="nav nav-pills">
         <li class="nav-item">
             <a class="nav-link {{ $filter === 'today' ? 'active' : '' }}"
-               href="{{ route('doctor.appointments.index', ['filter' => 'today']) }}">Today</a>
+               href="{{ route('doctor.appointments.index', ['filter' => 'today']) }}">
+                Today
+            </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $filter === 'upcoming' ? 'active' : '' }}"
-               href="{{ route('doctor.appointments.index', ['filter' => 'upcoming']) }}">Upcoming</a>
+               href="{{ route('doctor.appointments.index', ['filter' => 'upcoming']) }}">
+                Upcoming
+            </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $filter === 'pending' ? 'active' : '' }}"
-               href="{{ route('doctor.appointments.index', ['filter' => 'pending']) }}">Pending</a>
+               href="{{ route('doctor.appointments.index', ['filter' => 'pending']) }}">
+                Pending
+            </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $filter === 'all' ? 'active' : '' }}"
-               href="{{ route('doctor.appointments.index', ['filter' => 'all']) }}">All</a>
+               href="{{ route('doctor.appointments.index', ['filter' => 'all']) }}">
+                All
+            </a>
         </li>
     </ul>
 </div>
 
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+@if($errors->has('status'))
+    <div class="alert alert-danger">{{ $errors->first('status') }}</div>
 @endif
 
 <div class="card shadow-sm border-0">
@@ -59,15 +72,15 @@
             <tbody>
                 @forelse($appointments as $appointment)
                     @php
-                        $status = $appointment->status instanceof \App\Http\Enums\AppointmentStatus
-                            ? $appointment->status->value
-                            : (string) $appointment->status;
-
+                        $status = $appointment->effectiveStatus();
                         $rejectionReason = trim((string) ($appointment->rejection_reason ?? ''));
+                        $canRespond = $status === 'pending' && ! $appointment->isPastDue();
                     @endphp
 
                     <tr>
-                        <td>{{ \Illuminate\Support\Carbon::parse($appointment->appointment_date)->format('Y-m-d') }}</td>
+                        <td>
+                            {{ \Illuminate\Support\Carbon::parse($appointment->appointment_date)->format('Y-m-d') }}
+                        </td>
                         <td>{{ $appointment->appointment_time }}</td>
                         <td>{{ $appointment->user->name }}</td>
                         <td>{{ $appointment->pet?->name ?? '-' }}</td>
@@ -79,33 +92,50 @@
 
                             @if($status === 'rejected' && $rejectionReason !== '')
                                 <div class="small text-danger mt-1">
-                                    {{ \Illuminate\Support\Str::limit($rejectionReason, 50) }}
+                                    {{ Str::limit($rejectionReason, 50) }}
                                 </div>
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('doctor.appointments.show', $appointment) }}" class="btn btn-sm btn-info">Open</a>
+                            <a href="{{ route('doctor.appointments.show', $appointment) }}"
+                               class="btn btn-sm btn-info">
+                                Open
+                            </a>
 
-                            @if($status === 'pending')
-                                <form method="POST" action="{{ route('doctor.appointments.update', $appointment) }}" class="d-inline">
+                            @if($canRespond)
+                                <form method="POST"
+                                      action="{{ route('doctor.appointments.update', $appointment) }}"
+                                      class="d-inline">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="accepted">
-                                    <button class="btn btn-sm btn-success" onclick="return confirm('Accept this appointment?')">Accept</button>
+
+                                    <button class="btn btn-sm btn-success"
+                                            onclick="return confirm('Accept this appointment?')">
+                                        Accept
+                                    </button>
                                 </form>
 
-                                <form method="POST" action="{{ route('doctor.appointments.update', $appointment) }}" class="d-inline">
+                                <form method="POST"
+                                      action="{{ route('doctor.appointments.update', $appointment) }}"
+                                      class="d-inline">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="rejected">
-                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Reject this appointment?')">Reject</button>
+
+                                    <button class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Reject this appointment?')">
+                                        Reject
+                                    </button>
                                 </form>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center py-4 text-muted">No appointments found.</td>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            No appointments found.
+                        </td>
                     </tr>
                 @endforelse
             </tbody>

@@ -58,19 +58,33 @@ class AppointmentController extends Controller
         $doctorProfile = auth()->user()->doctorProfile;
 
         abort_unless($doctorProfile, 403, 'Doctor profile not found.');
-        abort_unless((int) $appointment->doctor_profile_id === (int) $doctorProfile->id, 403);
+        abort_unless(
+            (int) $appointment->doctor_profile_id === (int) $doctorProfile->id,
+            403,
+        );
 
         $appointment->load(['user', 'pet', 'doctor.specialty']);
 
         return view('doctor.appointments.show', compact('appointment'));
     }
 
-    public function update(UpdateAppointmentRequest $request, Appointment $appointment)
-    {
+    public function update(
+        UpdateAppointmentRequest $request,
+        Appointment $appointment,
+    ) {
         $doctorProfile = auth()->user()->doctorProfile;
 
         abort_unless($doctorProfile, 403, 'Doctor profile not found.');
-        abort_unless((int) $appointment->doctor_profile_id === (int) $doctorProfile->id, 403);
+        abort_unless(
+            (int) $appointment->doctor_profile_id === (int) $doctorProfile->id,
+            403,
+        );
+
+        if ($appointment->effectiveStatus() === 'expired') {
+            return back()->withErrors([
+                'status' => 'This appointment has expired and can no longer be updated.',
+            ]);
+        }
 
         $data = $request->validated();
 
@@ -83,6 +97,24 @@ class AppointmentController extends Controller
         if (! $this->canTransition($currentStatus, $newStatus)) {
             return back()->withErrors([
                 'status' => 'Invalid appointment status transition.',
+            ]);
+        }
+
+        if (
+            $newStatus === AppointmentStatus::Completed &&
+            ! $appointment->isPastDue()
+        ) {
+            return back()->withErrors([
+                'status' => 'An appointment can only be marked completed once its scheduled time has passed.',
+            ]);
+        }
+
+        if (
+            $newStatus === AppointmentStatus::Accepted &&
+            $appointment->isPastDue()
+        ) {
+            return back()->withErrors([
+                'status' => 'This appointment has already expired and can no longer be accepted.',
             ]);
         }
 
@@ -104,7 +136,8 @@ class AppointmentController extends Controller
             $payload['accepted_at'] = null;
             $payload['completed_at'] = null;
             $payload['consultation_notes'] = null;
-            $payload['rejection_reason'] = $data['rejection_reason'] ?? 'Rejected by doctor';
+            $payload['rejection_reason'] =
+                $data['rejection_reason'] ?? 'Rejected by doctor';
         }
 
         if ($newStatus === AppointmentStatus::Completed) {
@@ -118,15 +151,18 @@ class AppointmentController extends Controller
         return back()->with('success', 'Appointment updated successfully.');
     }
 
-    private function canTransition(AppointmentStatus $current, AppointmentStatus $new): bool
-    {
+    private function canTransition(
+        AppointmentStatus $current,
+        AppointmentStatus $new,
+    ): bool {
         return match ($current) {
             AppointmentStatus::Pending => in_array($new, [
                 AppointmentStatus::Accepted,
                 AppointmentStatus::Rejected,
             ], true),
 
-            AppointmentStatus::Accepted => $new === AppointmentStatus::Completed,
+            AppointmentStatus::Accepted =>
+                $new === AppointmentStatus::Completed,
 
             default => false,
         };

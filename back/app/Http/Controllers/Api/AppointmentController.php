@@ -281,6 +281,8 @@ class AppointmentController extends Controller
             'appointment_time' => $appointment->appointment_time,
             'duration_minutes' => (int) $appointment->duration_minutes,
             'status' => $status,
+            'effective_status' => $appointment->effectiveStatus(),
+            'is_expired' => $appointment->isActiveBooking() && $appointment->isPastDue(),
             'can_reschedule' => $this->canModifyUpcomingAppointment($appointment),
             'can_cancel' => $this->canModifyUpcomingAppointment($appointment),
             'reason' => $appointment->reason,

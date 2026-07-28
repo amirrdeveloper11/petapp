@@ -57,7 +57,7 @@ class AppointmentCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         AppStatusChip(
-                          status: appointment.status,
+                          status: appointment.displayStatus,
                           compact: true,
                         ),
                       ],
@@ -123,11 +123,7 @@ class _Meta extends StatelessWidget {
   final String text;
   final Color color;
 
-  const _Meta({
-    required this.icon,
-    required this.text,
-    required this.color,
-  });
+  const _Meta({required this.icon, required this.text, required this.color});
 
   @override
   Widget build(BuildContext context) {

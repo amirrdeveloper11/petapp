@@ -29,10 +29,13 @@ class AppointmentDetailsSummaryCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Appointment #${appointment.id}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ),
-                AppStatusChip(status: appointment.status),
+                AppStatusChip(status: appointment.displayStatus),
               ],
             ),
             const SizedBox(height: 14),
@@ -42,7 +45,10 @@ class AppointmentDetailsSummaryCard extends StatelessWidget {
               AppLabeledValue(label: 'Pet', value: appointment.pet!.name),
             ],
             if (appointment.doctor != null) ...[
-              AppLabeledValue(label: 'Doctor', value: appointment.doctor!.fullName),
+              AppLabeledValue(
+                label: 'Doctor',
+                value: appointment.doctor!.fullName,
+              ),
               AppLabeledValue(
                 label: 'Fee',
                 value: currency.format(appointment.doctor!.consultationFee),

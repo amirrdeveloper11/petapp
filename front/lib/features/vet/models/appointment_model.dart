@@ -61,6 +61,7 @@ class AppointmentModel {
   final String appointmentTime;
   final int durationMinutes;
   final String status;
+  final bool isExpired;
   final bool canReschedule;
   final bool canCancel;
   final String? reason;
@@ -76,6 +77,7 @@ class AppointmentModel {
     required this.appointmentTime,
     required this.durationMinutes,
     required this.status,
+    this.isExpired = false,
     required this.canReschedule,
     required this.canCancel,
     this.reason,
@@ -95,24 +97,42 @@ class AppointmentModel {
     ]);
 
     final status = _toString(json['status']);
+    final appointmentDate = _normalizeDate(
+      json['appointment_date'] ?? json['date'] ?? json['appointmentDate'],
+    );
+    final appointmentTime = _normalizeTime(
+      json['appointment_time'] ?? json['time'] ?? json['appointmentTime'],
+    );
+    final durationMinutes = _toInt(
+      json['duration_minutes'] ?? json['durationMinutes'],
+      fallback: 30,
+    );
+
+    final isExpired =
+        json.containsKey('is_expired') || json.containsKey('effective_status')
+        ? (_toBool(json['is_expired']) ||
+              _toString(json['effective_status']).toLowerCase() == 'expired')
+        : _isPendingLike(status) &&
+              _computeIsPastDue(
+                appointmentDate,
+                appointmentTime,
+                durationMinutes,
+              );
+
     final apiCanReschedule = _toBool(json['can_reschedule']);
     final apiCanCancel = _toBool(json['can_cancel']);
+    final localPendingFallback = !isExpired && _isPendingLike(status);
 
     return AppointmentModel(
       id: _toInt(json['id']),
-      appointmentDate: _normalizeDate(
-        json['appointment_date'] ?? json['date'] ?? json['appointmentDate'],
-      ),
-      appointmentTime: _normalizeTime(
-        json['appointment_time'] ?? json['time'] ?? json['appointmentTime'],
-      ),
-      durationMinutes: _toInt(
-        json['duration_minutes'] ?? json['durationMinutes'],
-        fallback: 30,
-      ),
+      appointmentDate: appointmentDate,
+      appointmentTime: appointmentTime,
+      durationMinutes: durationMinutes,
       status: status,
-      canReschedule: apiCanReschedule || _isPendingLike(status),
-      canCancel: apiCanCancel || _isPendingLike(status),
+      isExpired: isExpired,
+
+      canReschedule: apiCanReschedule || localPendingFallback,
+      canCancel: apiCanCancel || localPendingFallback,
       reason: _toStringNullable(json['reason']),
       consultationNotes: _toStringNullable(
         json['consultation_notes'] ?? json['consultationNotes'],
@@ -130,6 +150,7 @@ class AppointmentModel {
 
   AppointmentModel copyWith({
     String? status,
+    bool? isExpired,
     bool? canReschedule,
     bool? canCancel,
     String? appointmentDate,
@@ -147,6 +168,7 @@ class AppointmentModel {
       appointmentTime: appointmentTime ?? this.appointmentTime,
       durationMinutes: durationMinutes,
       status: status ?? this.status,
+      isExpired: isExpired ?? this.isExpired,
       canReschedule: canReschedule ?? this.canReschedule,
       canCancel: canCancel ?? this.canCancel,
       reason: reason ?? this.reason,
@@ -158,11 +180,14 @@ class AppointmentModel {
     );
   }
 
-  bool get canRescheduleAction => canReschedule && !_isTerminal(status);
-  bool get canCancelAction => canCancel && !_isTerminal(status);
+  bool get canRescheduleAction => canReschedule && !isTerminal;
+  bool get canCancelAction => canCancel && !isTerminal;
+
+  String get displayStatus => isExpired ? 'expired' : status;
 
   bool get isTerminal =>
-      _isTerminal(status) ||
+      isExpired ||
+      _isCompletedLike(status) ||
       _isCancelledLike(status) ||
       _isRejectedLike(status);
 
@@ -194,8 +219,37 @@ class AppointmentModel {
     return s.contains('reject') || s.contains('declin');
   }
 
-  static bool _isTerminal(String value) =>
-      _isCancelledLike(value) || _isRejectedLike(value);
+  static bool _isCompletedLike(String value) {
+    final s = value.trim().toLowerCase();
+    return s.contains('complete') || s.contains('done');
+  }
+
+  static bool _computeIsPastDue(
+    String appointmentDate,
+    String appointmentTime,
+    int durationMinutes,
+  ) {
+    if (appointmentDate.isEmpty || appointmentTime.isEmpty) return false;
+
+    final parts = appointmentTime.split(':');
+    if (parts.length < 2) return false;
+
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    final datePart = DateTime.tryParse(appointmentDate);
+    if (hour == null || minute == null || datePart == null) return false;
+
+    final start = DateTime(
+      datePart.year,
+      datePart.month,
+      datePart.day,
+      hour,
+      minute,
+    );
+    final end = start.add(Duration(minutes: durationMinutes));
+
+    return end.isBefore(DateTime.now());
+  }
 
   static int _toInt(dynamic value, {int fallback = 0}) {
     if (value is int) return value;
