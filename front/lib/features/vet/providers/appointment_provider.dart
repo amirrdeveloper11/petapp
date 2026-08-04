@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/appointment_model.dart';
-import '../services/vet_service.dart';
+import '../../../core/services/vet_service.dart';
 
 class AppointmentProvider extends ChangeNotifier {
   final VetService _service;

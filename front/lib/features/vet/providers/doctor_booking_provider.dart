@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:front/features/petcrud/model/pet_model.dart';
-import 'package:front/features/petcrud/service/pet_service.dart';
+import 'package:front/core/services/pet_service.dart';
 
 import '../models/appointment_model.dart';
 import '../models/doctor_model.dart';
 import '../models/doctor_schedule_model.dart';
-import '../services/vet_service.dart';
+import '../../../core/services/vet_service.dart';
 
 class DoctorBookingProvider extends ChangeNotifier {
   DoctorBookingProvider({VetService? service})

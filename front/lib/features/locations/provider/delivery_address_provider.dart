@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../model/delivery_address_model.dart';
-import '../service/delivery_address_service.dart';
+import '../../../core/services/delivery_address_service.dart';
 
 class DeliveryAddressProvider extends ChangeNotifier {
   final DeliveryAddressService _service;
 
   DeliveryAddressProvider({DeliveryAddressService? service})
-      : _service = service ?? const DeliveryAddressService();
+      : _service = service ??  DeliveryAddressService();
 
   List<DeliveryAddressModel> _addresses = [];
   bool _loading = false;

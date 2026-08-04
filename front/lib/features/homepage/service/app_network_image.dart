@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:front/core/network/api_config.dart';
 
-import '../../order_checkout/network/api_config.dart';
 
 class AppNetworkImage extends StatelessWidget {
   final String? url;

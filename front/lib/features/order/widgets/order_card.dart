@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/features/order_checkout/order/model/order_model.dart';
+import 'package:front/features/order/model/order_model.dart';
 import 'package:intl/intl.dart';
 
 import 'package:front/widgets/app_status_chip.dart';

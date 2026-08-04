@@ -4,7 +4,7 @@ import 'package:front/widgets/app_confirm_dialog.dart';
 
 import '../models/appointment_model.dart';
 import '../providers/appointment_provider.dart';
-import '../services/vet_service.dart';
+import '../../../core/services/vet_service.dart';
 import '../widgets/appointment_details_actions.dart';
 import '../widgets/appointment_details_summary_card.dart';
 import '../widgets/appointment_reschedule_sheet.dart';

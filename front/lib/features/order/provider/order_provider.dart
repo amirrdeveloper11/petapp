@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:front/features/order_checkout/order/model/order_item_model.dart';
-import 'package:front/features/order_checkout/order/model/order_model.dart';
-import 'package:front/features/order_checkout/order/model/order_request.dart';
-import 'package:front/features/order_checkout/order/model/payment_method.dart';
-import 'package:front/features/order_checkout/order/service/order_service.dart';
+import 'package:front/features/order/model/order_item_model.dart';
+import 'package:front/features/order/model/order_model.dart';
+import 'package:front/features/order/model/order_request.dart';
+import 'package:front/features/order/model/payment_method.dart';
+import 'package:front/core/services/order_service.dart';
 import 'package:front/features/store/models/cart_item_model.dart';
 
 class OrderProvider extends ChangeNotifier {
   final OrderService _service;
 
-  OrderProvider({OrderService? service}) : _service = service ?? const OrderService();
+  OrderProvider({OrderService? service}) : _service = service ??  OrderService();
 
   List<OrderModel> _orders = [];
   bool _isLoading = false;

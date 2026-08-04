@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:front/features/order_checkout/order/provider/order_provider.dart';
-import 'package:front/features/order_checkout/order/widgets/order_card.dart';
+import 'package:front/features/order/provider/order_provider.dart';
+import 'package:front/features/order/widgets/order_card.dart';
 import 'package:provider/provider.dart';
 
 import 'package:front/routes/app_routes.dart';

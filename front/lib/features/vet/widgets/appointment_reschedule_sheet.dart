@@ -4,7 +4,7 @@ import 'package:front/widgets/custom_button.dart';
 import '../models/appointment_model.dart';
 import '../models/doctor_model.dart';
 import '../models/doctor_schedule_model.dart';
-import '../services/vet_service.dart';
+import '../../../core/services/vet_service.dart';
 import 'booking_date_field.dart';
 import 'slot_picker.dart';
 

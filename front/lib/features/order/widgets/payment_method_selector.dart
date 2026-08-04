@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/features/order_checkout/order/model/payment_method.dart';
+import 'package:front/features/order/model/payment_method.dart';
 
 class PaymentMethodSelector extends StatelessWidget {
   final PaymentMethodType value;

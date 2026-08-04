@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:front/features/order_checkout/order/model/order_model.dart';
-import 'package:front/features/order_checkout/order/model/payment_method.dart';
-import 'package:front/features/order_checkout/order/service/order_service.dart';
-import 'package:front/features/order_checkout/order/widgets/order_item_tile.dart';
+import 'package:front/features/order/model/order_model.dart';
+import 'package:front/features/order/model/payment_method.dart';
+import 'package:front/core/services/order_service.dart';
+import 'package:front/features/order/widgets/order_item_tile.dart';
 import 'package:intl/intl.dart';
 
 import 'package:front/widgets/app_confirm_dialog.dart';
@@ -20,7 +20,7 @@ class OrderDetailsPage extends StatefulWidget {
 }
 
 class _OrderDetailsPageState extends State<OrderDetailsPage> {
-  final OrderService _service = const OrderService();
+  final OrderService _service =  OrderService();
   late OrderModel _order;
   bool _busy = false;
 

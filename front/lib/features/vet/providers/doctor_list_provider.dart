@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/doctor_model.dart';
 import '../models/specialty_model.dart';
-import '../services/vet_service.dart';
+import '../../../core/services/vet_service.dart';
 
 class DoctorListProvider extends ChangeNotifier {
   DoctorListProvider({VetService? service}) : _service = service ??  VetService();
