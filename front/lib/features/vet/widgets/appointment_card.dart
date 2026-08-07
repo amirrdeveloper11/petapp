@@ -38,7 +38,9 @@ class AppointmentCard extends StatelessWidget {
                   color: AppColors.primaryGreenDark,
                 ),
               ),
+
               const SizedBox(width: 14),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,13 +57,16 @@ class AppointmentCard extends StatelessWidget {
                             ),
                           ),
                         ),
+
                         const SizedBox(width: 8),
+
                         AppStatusChip(
                           status: appointment.displayStatus,
                           compact: true,
                         ),
                       ],
                     ),
+
                     if (appointment.doctor?.specialtyName != null) ...[
                       const SizedBox(height: 2),
                       Text(
@@ -73,7 +78,9 @@ class AppointmentCard extends StatelessWidget {
                         ),
                       ),
                     ],
+
                     const SizedBox(height: 8),
+
                     Wrap(
                       spacing: 12,
                       runSpacing: 4,
@@ -83,11 +90,13 @@ class AppointmentCard extends StatelessWidget {
                           text: appointment.appointmentDate,
                           color: cs.onSurfaceVariant,
                         ),
+
                         _Meta(
                           icon: Icons.access_time_rounded,
                           text: appointment.appointmentTime,
                           color: cs.onSurfaceVariant,
                         ),
+
                         if (appointment.pet != null)
                           _Meta(
                             icon: Icons.pets_rounded,
@@ -96,6 +105,7 @@ class AppointmentCard extends StatelessWidget {
                           ),
                       ],
                     ),
+
                     if (onTap != null) ...[
                       const SizedBox(height: 8),
                       Text(
