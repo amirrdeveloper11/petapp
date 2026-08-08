@@ -7,7 +7,7 @@ class DoctorCard extends StatelessWidget {
   final DoctorModel doctor;
   final VoidCallback onTap;
 
-  /// Optional values to make the card look like the screenshot.
+
   final String? statusLabel;
   final String? dateText;
   final String? timeText;
