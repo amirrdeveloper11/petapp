@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/widgets/app_filter_chip.dart';
 
 import '../models/specialty_model.dart';
 
@@ -21,19 +22,20 @@ class SpecialtyFilterChips extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          FilterChip(
-            label: const Text('All'),
+          AppFilterPill(
+            label: 'All',
             selected: selectedId == null,
-            onSelected: (_) => onSelected(null),
+            icon: Icons.apps_rounded,
+            onTap: () => onSelected(null),
           ),
           const SizedBox(width: 8),
           ...specialties.map(
             (s) => Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: FilterChip(
-                label: Text(s.name),
+              child: AppFilterPill(
+                label: s.name,
                 selected: selectedId == s.id,
-                onSelected: (_) => onSelected(selectedId == s.id ? null : s.id),
+                onTap: () => onSelected(selectedId == s.id ? null : s.id),
               ),
             ),
           ),

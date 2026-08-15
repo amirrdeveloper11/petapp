@@ -39,7 +39,7 @@ class LoginForm extends StatelessWidget {
                 provider.isPasswordVisible
                     ? Icons.visibility_off
                     : Icons.visibility,
-                color: AppColors.primaryGreen,
+                color: AppColors.deepTeal,
               ),
               onPressed: provider.togglePasswordVisibility,
             ),

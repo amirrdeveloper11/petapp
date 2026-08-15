@@ -13,8 +13,8 @@ class WorkingScheduleTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.softBackground,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.tealSoft,
+        borderRadius: BorderRadius.circular(AppRadii.md),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -30,7 +30,7 @@ class WorkingScheduleTile extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
-                    color: AppColors.textDark,
+                    color: AppColors.textPrimary,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -38,13 +38,14 @@ class WorkingScheduleTile extends StatelessWidget {
               const Icon(
                 Icons.schedule_rounded,
                 size: 14,
-                color: AppColors.primaryGreenDark,
+                color: AppColors.deepTeal,
               ),
               Text(
                 '${hour.startTime} - ${hour.endTime}',
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
               ),
               if (hour.notes != null && hour.notes!.isNotEmpty)

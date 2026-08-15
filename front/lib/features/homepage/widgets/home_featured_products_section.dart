@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/theme.dart';
 import '../../homepage/models/category_model.dart';
 import '../../homepage/models/product_model.dart';
 import '../widgets/home_product_card.dart';
+import '../widgets/home_section_header.dart';
 
 class HomeFeaturedProductsSection extends StatelessWidget {
   final List<ProductModel> products;
@@ -23,40 +23,24 @@ class HomeFeaturedProductsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Featured Products',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-            ),
-            InkWell(
-              onTap: onSeeAll,
-              child: const Padding(
-                padding: EdgeInsets.all(4),
-                child: Text(
-                  'See all',
-                  style: TextStyle(
-                    color: AppColors.primaryGreen,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-          ],
+        HomeSectionHeader(
+          title: 'Recommended for You',
+          subtitle: 'Picked from our most-loved products',
+          leadingIcon: Icons.auto_awesome_rounded,
+          onActionTap: onSeeAll,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
         SizedBox(
           height: 270,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: products.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            separatorBuilder: (_, __) => const SizedBox(width: 14),
             itemBuilder: (_, index) {
               final product = products[index];
 
               return SizedBox(
-                width: 170,
+                width: 172,
                 child: HomeProductCard(
                   product: product,
                   categories: categories,

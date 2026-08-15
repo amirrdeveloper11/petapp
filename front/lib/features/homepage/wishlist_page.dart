@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 import 'package:front/features/homepage/provider/wishlist_provider.dart';
 import 'package:front/features/homepage/widgets/wishlist_item_card.dart';
 import 'package:front/widgets/app_empty_state.dart';
+import 'package:front/widgets/app_loading_states.dart';
 import 'package:provider/provider.dart';
 
 class WishlistPage extends StatelessWidget {
@@ -12,18 +14,22 @@ class WishlistPage extends StatelessWidget {
     final wishlist = context.watch<WishlistProvider>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: AppColors.cream,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.deepTeal),
         title: const Text(
           'Wishlist',
-          style: TextStyle(fontWeight: FontWeight.w800),
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            color: AppColors.textPrimary,
+          ),
         ),
       ),
       body: wishlist.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const AppListShimmer()
           : wishlist.items.isEmpty
           ? const AppEmptyState(
               icon: Icons.favorite_border_rounded,

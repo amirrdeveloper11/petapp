@@ -20,25 +20,13 @@ class ProductDetailsActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: SizedBox(
-            height: 54,
-            child: CustomButton(
-              onPressed: enabled && !isProcessing ? onAddToCart : null,
-
-              text: enabled ? 'Add to cart' : 'Out of stock',
-            ),
-          ),
-        ),
-
-        const SizedBox(width: 12),
         Container(
           height: 54,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.inputStroke.withOpacity(0.25)),
+            color: AppColors.ivory,
+            borderRadius: BorderRadius.circular(AppRadii.md),
+            border: Border.all(color: AppColors.hairline),
           ),
           alignment: Alignment.center,
           child: Text(
@@ -46,7 +34,19 @@ class ProductDetailsActions extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w800,
-              color: AppColors.primaryGreenDark,
+              color: AppColors.deepTeal,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: SizedBox(
+            height: 54,
+            child: CustomButton(
+              onPressed: enabled && !isProcessing ? onAddToCart : null,
+              isLoading: isProcessing,
+              icon: enabled ? Icons.shopping_cart_rounded : null,
+              text: enabled ? 'Add to cart' : 'Out of stock',
             ),
           ),
         ),

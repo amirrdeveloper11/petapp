@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 import 'package:front/widgets/custom_button.dart';
 
 class AppointmentDetailsActions extends StatelessWidget {
@@ -40,15 +41,16 @@ class AppointmentDetailsActions extends StatelessWidget {
             child: OutlinedButton(
               onPressed: busy ? null : onCancel,
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Theme.of(context).colorScheme.error),
+                foregroundColor: AppColors.danger,
+                side: const BorderSide(color: AppColors.danger),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(AppRadii.md),
                 ),
               ),
               child: Text(
                 busy ? 'Please wait...' : 'Cancel appointment',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
+                style: const TextStyle(
+                  color: AppColors.danger,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),

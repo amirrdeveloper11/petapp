@@ -3,33 +3,29 @@ import 'package:front/core/theme.dart';
 import 'package:front/features/homepage/models/product_model.dart';
 import 'package:front/features/homepage/service/app_network_image.dart';
 
+/// The single shared product card used on Home, Store grid and anywhere
+/// else a product needs to be shown as a tile. Restyled to the ivory /
+/// hairline / soft-shadow premium language, with a teal price accent and
+/// a cleaner in-stock / out-of-stock treatment.
 class AppProductCard extends StatelessWidget {
   final ProductModel product;
   final VoidCallback? onTap;
 
-  const AppProductCard({
-    super.key,
-    required this.product,
-    this.onTap,
-  });
+  const AppProductCard({super.key, required this.product, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final url = product.imageUrl?.trim();
+    final inStock = product.stock > 0;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowLight,
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          color: AppColors.ivory,
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          border: Border.all(color: AppColors.hairline, width: 1),
+          boxShadow: AppShadows.card,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,39 +33,75 @@ class AppProductCard extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: (url != null && url.isNotEmpty)
-                          ? AppNetworkImage(
-                              url: url,
-                              fit: BoxFit.cover,
-                              errorWidget: const Center(
-                                child: Icon(Icons.image_not_supported_outlined),
-                              ),
-                            )
-                          : const Center(
-                              child: Icon(Icons.image_not_supported_outlined),
-                            ),
+                  Positioned.fill(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadii.lg),
+                        child: Container(
+                          color: AppColors.tealSoft,
+                          child: Opacity(
+                            opacity: inStock ? 1 : 0.45,
+                            child: (url != null && url.isNotEmpty)
+                                ? AppNetworkImage(
+                                    url: url,
+                                    fit: BoxFit.cover,
+                                    errorWidget: const Center(
+                                      child: Icon(
+                                        Icons.image_not_supported_outlined,
+                                        color: AppColors.teal,
+                                      ),
+                                    ),
+                                  )
+                                : const Center(
+                                    child: Icon(
+                                      Icons.image_not_supported_outlined,
+                                      color: AppColors.teal,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  if (product.stock > 0)
-                    Positioned(
-                      left: 12,
-                      top: 12,
-                      child: _Badge(
-                        text: 'In stock',
-                        color: Colors.green,
+                  Positioned(
+                    left: 12,
+                    top: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
                       ),
-                    )
-                  else
+                      decoration: BoxDecoration(
+                        color: (inStock ? AppColors.success : AppColors.danger)
+                            .withOpacity(0.94),
+                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                      ),
+                      child: Text(
+                        inStock ? 'In stock' : 'Out of stock',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (product.isFeatured)
                     Positioned(
-                      left: 12,
+                      right: 12,
                       top: 12,
-                      child: _Badge(
-                        text: 'Out',
-                        color: Colors.red,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.gold.withOpacity(0.95),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.star_rounded,
+                          size: 13,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                 ],
@@ -82,54 +114,28 @@ class AppProductCard extends StatelessWidget {
                 children: [
                   Text(
                     product.name,
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
-                      height: 1.2,
+                      fontSize: 13.5,
+                      height: 1.25,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 5),
                   Text(
                     '${product.price.toStringAsFixed(2)} ل.س',
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
-                      color: AppColors.primaryGreenDark,
+                      fontSize: 13.5,
+                      color: AppColors.deepTeal,
                     ),
                   ),
                 ],
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Badge extends StatelessWidget {
-  final String text;
-  final Color color;
-
-  const _Badge({
-    required this.text,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.92),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front/features/vet/vet_section.dart';
 import 'package:provider/provider.dart';
 
+import 'package:front/core/theme.dart';
 import 'package:front/features/store/sections/store_section.dart';
 import 'package:front/features/homepage/home_page_section.dart';
 import 'package:front/features/homepage/provider/home_provider.dart';
@@ -38,12 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final homeProvider = context.watch<HomeProvider>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
+      backgroundColor: AppColors.cream,
       body: SafeArea(
         child: IndexedStack(
           index: _selectedIndex,
           children: [
-            HomePageSection(onOpenStore: _openStore),
+            HomePageSection(onOpenStore: _openStore, onSwitchTab: _changeTab),
             StoreSection(
               products: homeProvider.products,
               categories: homeProvider.categories,
@@ -57,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+      
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _selectedIndex,
         onTabChange: _changeTab,

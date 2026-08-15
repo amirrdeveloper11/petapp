@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:front/core/theme.dart';
 import 'package:front/widgets/app_confirm_dialog.dart';
 
 import '../models/appointment_model.dart';
@@ -64,6 +65,7 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
+      backgroundColor: Colors.transparent,
       builder: (_) => AppointmentRescheduleSheet(
         service: _service,
         appointment: _appointment,
@@ -117,12 +119,19 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
+        backgroundColor: AppColors.cream,
         title: Text(
           'Appointment #${_appointment.id}',
-          style: const TextStyle(fontWeight: FontWeight.w800),
+          style: const TextStyle(
+            fontWeight: FontWeight.w800,
+            color: AppColors.textPrimary,
+          ),
         ),
+        iconTheme: const IconThemeData(color: AppColors.deepTeal),
         surfaceTintColor: Colors.transparent,
+        elevation: 0,
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),

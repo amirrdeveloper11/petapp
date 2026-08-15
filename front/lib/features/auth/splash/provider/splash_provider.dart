@@ -19,39 +19,44 @@ class SplashProvider with ChangeNotifier {
     state = SplashState.loading;
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 600));
+    try {
+      await Future.delayed(const Duration(milliseconds: 600));
 
-    final refreshToken = await SecureStorageService.readRefreshToken();
+      final refreshToken = await SecureStorageService.readRefreshToken();
 
-    if (refreshToken == null) {
-      _goToLogin(context);
-      _busy = false;
-      return;
-    }
-
-    final result = await AuthServiceDio.refreshToken(
-      refreshToken: refreshToken,
-    );
-
-    if (result['statusCode'] == 200) {
-      final data = result['body']['data'];
-      if (data != null && data['user'] != null && context.mounted) {
-        final user = UserModel.fromJson(data['user']);
-        context.read<UserProvider>().setUser(user);
-        state = SplashState.done;
-        notifyListeners();
-        Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
-      } else {
+      if (refreshToken == null) {
         _goToLogin(context);
+        return;
       }
-    } else if (result['statusCode'] == 401) {
-      _goToLogin(context);
-    } else {
+
+      final result = await AuthServiceDio.refreshToken(
+        refreshToken: refreshToken,
+      );
+
+      if (result['statusCode'] == 200) {
+        final data = result['body']['data'];
+        if (data != null && data['user'] != null && context.mounted) {
+          final user = UserModel.fromJson(data['user']);
+          context.read<UserProvider>().setUser(user);
+          state = SplashState.done;
+          notifyListeners();
+          Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
+        } else {
+          _goToLogin(context);
+        }
+      } else if (result['statusCode'] == 401) {
+        _goToLogin(context);
+      } else {
+        state = SplashState.error;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('[SPLASH] exception: $e');
       state = SplashState.error;
       notifyListeners();
+    } finally {
+      _busy = false;
     }
-
-    _busy = false;
   }
 
   void retry(BuildContext context) {

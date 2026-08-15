@@ -20,41 +20,32 @@ class BookingDateChip extends StatelessWidget {
 
   String _monthShort() {
     const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return months[date.month - 1];
   }
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = selected ? AppColors.primaryGreen : Colors.grey.shade300;
-    final backgroundColor = selected ? AppColors.primaryGreen : Colors.white;
+    final backgroundColor = selected ? AppColors.deepTeal : AppColors.ivory;
+    final borderColor = selected ? AppColors.deepTeal : AppColors.hairline;
     final foregroundColor = selected ? Colors.white : AppColors.textPrimary;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           width: 74,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppRadii.md),
             border: Border.all(color: borderColor),
+            boxShadow: selected ? AppShadows.soft : null,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -73,7 +64,7 @@ class BookingDateChip extends StatelessWidget {
                 style: TextStyle(
                   color: foregroundColor,
                   fontSize: 18,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 2),

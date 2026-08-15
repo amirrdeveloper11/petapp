@@ -14,6 +14,7 @@ class LoginPage extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => LoginProvider(),
       child: Scaffold(
+        backgroundColor: AppColors.cream,
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
@@ -26,28 +27,34 @@ class LoginPage extends StatelessWidget {
                       width: 84,
                       height: 84,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryGreen,
-                        borderRadius: BorderRadius.circular(20),
+                        color: AppColors.tealSoft,
+                        borderRadius: BorderRadius.circular(AppRadii.xl),
+                        border: Border.all(color: AppColors.hairline),
                       ),
                       child: const Icon(
-                        Icons.pets,
-                        color: Colors.white,
-                        size: 44,
+                        Icons.pets_rounded,
+                        color: AppColors.deepTeal,
+                        size: 40,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     const Text(
-                      'PetCo',
+                      'Pawpal',
                       style: TextStyle(
                         fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textDark,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.4,
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
+                    Text(
                       "Your Pet's Best Friend",
-                      style: TextStyle(fontSize: 15),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary.withOpacity(0.9),
+                      ),
                     ),
                   ],
                 ),
@@ -64,7 +71,13 @@ class LoginPage extends StatelessWidget {
                     context,
                     AppRoutes.registerScreen,
                   ),
-                  child: const Text("Don’t have an account? Register"),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.deepTeal,
+                  ),
+                  child: const Text(
+                    "Don't have an account? Register",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),

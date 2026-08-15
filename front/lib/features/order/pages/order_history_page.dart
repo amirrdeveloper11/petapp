@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 import 'package:front/features/order/provider/order_provider.dart';
 import 'package:front/features/order/widgets/order_card.dart';
 import 'package:provider/provider.dart';
 
 import 'package:front/routes/app_routes.dart';
 import 'package:front/widgets/app_empty_state.dart';
-import 'package:front/widgets/app_shimmer.dart';
-import 'package:front/widgets/custom_button.dart';
+import 'package:front/widgets/app_loading_states.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   const OrderHistoryPage({super.key});
@@ -37,72 +37,83 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
       child: Consumer<OrderProvider>(
         builder: (context, provider, _) {
           return Scaffold(
+            backgroundColor: AppColors.cream,
             appBar: AppBar(
+              backgroundColor: AppColors.cream,
               title: const Text(
                 'My Orders',
-                style: TextStyle(fontWeight: FontWeight.w800),
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
               ),
+              iconTheme: const IconThemeData(color: AppColors.deepTeal),
               surfaceTintColor: Colors.transparent,
+              elevation: 0,
             ),
             body: RefreshIndicator(
+              color: AppColors.teal,
               onRefresh: provider.refresh,
-              child: provider.isLoading && provider.orders.isEmpty
-                  ? ListView.separated(
-                      padding: const EdgeInsets.all(16),
-                      itemBuilder: (_, __) => const AppShimmer(height: 108, width: double.infinity),
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
-                      itemCount: 5,
-                    )
-                  : provider.errorMessage != null && provider.orders.isEmpty
-                      ? ListView(
-                          padding: const EdgeInsets.all(16),
-                          children: [
-                            AppEmptyState(
-                              icon: Icons.error_outline_rounded,
-                              title: 'Could not load orders',
-                              subtitle: provider.errorMessage ?? 'Try again.',
-                            ),
-                            const SizedBox(height: 16),
-                            CustomButton(
-                              text: 'Retry',
-                              onPressed: provider.fetchOrders,
-                            ),
-                          ],
-                        )
-                      : provider.orders.isEmpty
-                          ? ListView(
-                              padding: const EdgeInsets.all(16),
-                              children: const [
-                                AppEmptyState(
-                                  icon: Icons.receipt_long_outlined,
-                                  title: 'No orders yet',
-                                  subtitle: 'Placed orders will appear here.',
-                                ),
-                              ],
-                            )
-                          : ListView.separated(
-                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                              itemCount: provider.orders.length,
-                              separatorBuilder: (_, __) => const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                final order = provider.orders[index];
-
-                                return OrderCard(
-                                  order: order,
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      AppRoutes.orderDetails,
-                                      arguments: order,
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+              child: _buildBody(provider),
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildBody(OrderProvider provider) {
+    if (provider.isLoading && provider.orders.isEmpty) {
+      return const AppListShimmer();
+    }
+
+    if (provider.errorMessage != null && provider.orders.isEmpty) {
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          AppEmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Could not load orders',
+            subtitle: provider.errorMessage ?? 'Try again.',
+            actionLabel: 'Retry',
+            onAction: provider.fetchOrders,
+          ),
+        ],
+      );
+    }
+
+    if (provider.orders.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: const [
+          SizedBox(height: 100),
+          AppEmptyState(
+            icon: Icons.receipt_long_outlined,
+            title: 'No orders yet',
+            subtitle: 'Placed orders will appear here.',
+          ),
+        ],
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      itemCount: provider.orders.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final order = provider.orders[index];
+
+        return OrderCard(
+          order: order,
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.orderDetails,
+              arguments: order,
+            );
+          },
+        );
+      },
     );
   }
 }

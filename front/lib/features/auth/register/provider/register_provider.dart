@@ -74,8 +74,17 @@ class RegisterProvider with ChangeNotifier {
         if (!context.mounted) return;
         Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
       } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(body['message'] ?? 'Registration failed')),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('[REGISTER] exception: $e');
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(body['message'] ?? 'Registration failed')),
+          const SnackBar(content: Text('An error occurred, please try again')),
         );
       }
     } finally {

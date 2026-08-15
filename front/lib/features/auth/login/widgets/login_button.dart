@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/theme.dart';
 import 'package:front/features/auth/login/provider/login_provider.dart';
+import 'package:front/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
+/// Delegates to the shared [CustomButton] instead of duplicating its own
+/// [ElevatedButton] styling, so login/register/checkout/booking all share
+/// exactly the same button look.
 class LoginButton extends StatelessWidget {
   const LoginButton({super.key});
 
@@ -10,27 +13,12 @@ class LoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<LoginProvider>(context);
 
-    return ElevatedButton(
+    return CustomButton(
+      text: 'Login',
+      isLoading: provider.isLoading,
       onPressed: provider.isLoading
           ? null
           : () => provider.submitLogin(context),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryGreen,
-        minimumSize: const Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: provider.isLoading
-          ? const CircularProgressIndicator(color: Colors.white)
-          : const Text(
-              "Login",
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
     );
   }
 }

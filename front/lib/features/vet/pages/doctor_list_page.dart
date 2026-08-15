@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:front/core/theme.dart';
+import 'package:front/widgets/app_empty_state.dart';
+import 'package:front/widgets/app_loading_states.dart';
+import 'package:front/widgets/app_section_header.dart';
+
 import '../providers/doctor_list_provider.dart';
 import '../widgets/doctor_card.dart';
 import '../widgets/specialty_filter_chips.dart';
 import 'doctor_details_page.dart';
-import 'package:front/widgets/app_empty_state.dart';
-import 'package:front/widgets/app_shimmer.dart';
-import 'package:front/widgets/custom_button.dart';
 
 class DoctorListPage extends StatelessWidget {
   const DoctorListPage({super.key});
@@ -19,43 +21,61 @@ class DoctorListPage extends StatelessWidget {
         final doctors = p.filteredDoctors;
 
         return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'Veterinarians',
-              style: TextStyle(fontWeight: FontWeight.w800),
-            ),
-            surfaceTintColor: Colors.transparent,
-          ),
+          backgroundColor: AppColors.cream,
           body: RefreshIndicator(
+            color: AppColors.teal,
             onRefresh: p.load,
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
               children: [
-                const SizedBox(height: 12),
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                    child: AppSectionHeader(
+                      title: 'Veterinarians',
+                      subtitle: 'Book trusted care for your pet',
+                      leadingIcon: Icons.medical_services_rounded,
+                    ),
+                  ),
+                ),
                 SpecialtyFilterChips(
                   specialties: p.specialties,
                   selectedId: p.selectedSpecialtyId,
                   onSelected: p.selectSpecialty,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 if (p.loading && p.doctors.isEmpty)
-                  _buildLoading()
+                  const AppListShimmer(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                  )
                 else if (p.error != null && p.doctors.isEmpty)
-                  _buildError(context, p)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: AppEmptyState(
+                      icon: Icons.error_outline_rounded,
+                      title: 'Could not load veterinarians',
+                      subtitle: p.error!,
+                      actionLabel: 'Retry',
+                      onAction: p.load,
+                    ),
+                  )
                 else if (doctors.isEmpty)
-                  const AppEmptyState(
-                    icon: Icons.medical_services_outlined,
-                    title: 'No veterinarians found',
-                    subtitle: 'Try another specialty or pull to refresh.',
+                  const Padding(
+                    padding: EdgeInsets.only(top: 40),
+                    child: AppEmptyState(
+                      icon: Icons.medical_services_outlined,
+                      title: 'No veterinarians found',
+                      subtitle: 'Try another specialty or pull to refresh.',
+                    ),
                   )
                 else
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: doctors.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    separatorBuilder: (_, __) => const SizedBox(height: 4),
                     itemBuilder: (context, index) {
                       final doctor = doctors[index];
                       return DoctorCard(
@@ -64,7 +84,8 @@ class DoctorListPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => DoctorDetailsPage(doctorId: doctor.id),
+                              builder: (_) =>
+                                  DoctorDetailsPage(doctorId: doctor.id),
                             ),
                           );
                         },
@@ -76,34 +97,6 @@ class DoctorListPage extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildLoading() {
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: 5,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, __) => const AppShimmer(height: 96, width: double.infinity),
-    );
-  }
-
-  Widget _buildError(BuildContext context, DoctorListProvider p) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          AppEmptyState(
-            icon: Icons.error_outline_rounded,
-            title: 'Could not load veterinarians',
-            subtitle: p.error!,
-          ),
-          const SizedBox(height: 16),
-          CustomButton(text: 'Retry', onPressed: p.load),
-        ],
-      ),
     );
   }
 }

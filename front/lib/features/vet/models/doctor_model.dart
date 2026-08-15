@@ -11,11 +11,14 @@ class DoctorModel {
   final bool isAvailable;
   final SpecialtyModel? specialty;
 
-  
+  /// Raw doctor shift windows from backend.
+  /// Example: Monday 09:00-17:00
   final List<WorkingHourModel> workingHours;
 
+  /// Real bookable slots returned by schedule endpoint.
   final List<String> availableSlots;
 
+  /// Already booked slots returned by schedule endpoint.
   final List<String> bookedSlots;
 
   const DoctorModel({

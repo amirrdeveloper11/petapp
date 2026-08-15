@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front/core/theme.dart';
 import 'package:front/features/homepage/models/category_model.dart';
 import 'package:front/features/homepage/service/app_network_image.dart';
+import 'package:front/features/homepage/widgets/home_section_header.dart';
 
 class HomeCategoriesSection extends StatelessWidget {
   final List<CategoryModel> categories;
@@ -22,14 +23,15 @@ class HomeCategoriesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Header(
-          title: 'Categories',
-          actionText: 'See all',
+        HomeSectionHeader(
+          title: 'Shop by Category',
+          subtitle: 'Curated essentials for every pet',
+          leadingIcon: Icons.grid_view_rounded,
           onActionTap: onSeeAll,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
         SizedBox(
-          height: 98,
+          height: 104,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: categories.length,
@@ -40,14 +42,15 @@ class HomeCategoriesSection extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onCategoryTap(category.id),
                 child: Container(
-                  width: 92,
+                  width: 88,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
+                    color: AppColors.ivory,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.hairline, width: 1),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: AppColors.shadowLight,
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),
@@ -57,10 +60,10 @@ class HomeCategoriesSection extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: AppColors.softBackground,
+                        width: 46,
+                        height: 46,
+                        decoration: const BoxDecoration(
+                          color: AppColors.tealSoft,
                           shape: BoxShape.circle,
                         ),
                         child: ClipOval(
@@ -72,10 +75,15 @@ class HomeCategoriesSection extends StatelessWidget {
                                   fit: BoxFit.cover,
                                   errorWidget: const Icon(
                                     Icons.category_outlined,
-                                    size: 22,
+                                    size: 20,
+                                    color: AppColors.teal,
                                   ),
                                 )
-                              : const Icon(Icons.category_outlined, size: 22),
+                              : const Icon(
+                                  Icons.category_outlined,
+                                  size: 20,
+                                  color: AppColors.teal,
+                                ),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -85,8 +93,10 @@ class HomeCategoriesSection extends StatelessWidget {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                          height: 1.15,
                         ),
                       ),
                     ],
@@ -94,45 +104,6 @@ class HomeCategoriesSection extends StatelessWidget {
                 ),
               );
             },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  final String title;
-  final String actionText;
-  final VoidCallback onActionTap;
-
-  const _Header({
-    required this.title,
-    required this.actionText,
-    required this.onActionTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-        ),
-        InkWell(
-          onTap: onActionTap,
-          borderRadius: BorderRadius.circular(8),
-          child: const Padding(
-            padding: EdgeInsets.all(4),
-            child: Text(
-              'See all',
-              style: TextStyle(
-                color: AppColors.primaryGreen,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
           ),
         ),
       ],

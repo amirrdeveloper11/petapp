@@ -23,22 +23,26 @@ class PasswordHints extends StatelessWidget {
   }
 
   Widget _hint(bool valid, String text) {
-    return Row(
-      children: [
-        Icon(
-          valid ? Icons.check_circle : Icons.circle,
-          size: 14,
-          color: valid ? AppColors.primaryGreen : Colors.grey,
-        ),
-        const SizedBox(width: 6),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 13,
-            color: valid ? AppColors.primaryGreen : Colors.grey,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Icon(
+            valid ? Icons.check_circle_rounded : Icons.circle_outlined,
+            size: 14,
+            color: valid ? AppColors.success : AppColors.muted,
           ),
-        ),
-      ],
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: valid ? AppColors.success : AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -54,14 +58,10 @@ class PasswordHints extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _hint(hasMinLength, 'At least 6 characters'),
-            const SizedBox(height: 4),
             _hint(hasNumber, 'Contains a number'),
-            const SizedBox(height: 4),
             _hint(hasSpecial, 'Contains a special character'),
-            if (confirmController != null) ...[
-              const SizedBox(height: 4),
+            if (confirmController != null)
               _hint(passwordsMatch, 'Passwords match'),
-            ],
           ],
         );
       },

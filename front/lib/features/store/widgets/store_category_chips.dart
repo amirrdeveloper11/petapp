@@ -36,20 +36,13 @@ class StoreCategoryChips extends StatelessWidget {
               width: 92,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: selected ? AppColors.softBackground : Colors.white,
-                borderRadius: BorderRadius.circular(18),
+                color: AppColors.ivory,
+                borderRadius: BorderRadius.circular(AppRadii.lg),
                 border: Border.all(
-                  color: selected
-                      ? AppColors.primaryGreen.withOpacity(0.4)
-                      : Colors.transparent,
+                  color: selected ? AppColors.deepTeal : AppColors.hairline,
+                  width: selected ? 1.4 : 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadowLight,
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                boxShadow: AppShadows.soft,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -57,8 +50,8 @@ class StoreCategoryChips extends StatelessWidget {
                   Container(
                     width: 44,
                     height: 44,
-                    decoration: const BoxDecoration(
-                      color: AppColors.softBackground,
+                    decoration: BoxDecoration(
+                      color: selected ? AppColors.deepTeal : AppColors.tealSoft,
                       shape: BoxShape.circle,
                     ),
                     child: ClipOval(
@@ -68,12 +61,19 @@ class StoreCategoryChips extends StatelessWidget {
                           ? AppNetworkImage(
                               url: category.imageUrl,
                               fit: BoxFit.cover,
-                              errorWidget: const Icon(
+                              errorWidget: Icon(
                                 Icons.category_outlined,
                                 size: 22,
+                                color: selected
+                                    ? Colors.white
+                                    : AppColors.teal,
                               ),
                             )
-                          : const Icon(Icons.category_outlined, size: 22),
+                          : Icon(
+                              Icons.category_outlined,
+                              size: 22,
+                              color: selected ? Colors.white : AppColors.teal,
+                            ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -82,9 +82,13 @@ class StoreCategoryChips extends StatelessWidget {
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: selected
+                          ? AppColors.deepTeal
+                          : AppColors.textPrimary,
+                      height: 1.15,
                     ),
                   ),
                 ],

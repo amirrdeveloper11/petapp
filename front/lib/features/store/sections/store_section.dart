@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/theme.dart';
 import '../../homepage/models/category_model.dart';
 import '../../homepage/models/product_model.dart';
 import '../pages/product_details_page.dart';
@@ -107,10 +108,9 @@ class _StoreView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<StoreProvider>();
-    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: AppColors.cream,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -121,7 +121,7 @@ class _StoreView extends StatelessWidget {
                 onBack: onBack,
                 onCartTap: onCartTap,
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
               StoreSearchBar(onChanged: provider.updateSearch),
               const SizedBox(height: 14),
               StoreCategoryChips(

@@ -52,10 +52,12 @@ class RegisterForm extends StatelessWidget {
                 provider.isPasswordVisible
                     ? Icons.visibility_off
                     : Icons.visibility,
-                color: AppColors.primaryGreen,
+                color: AppColors.deepTeal,
               ),
               onPressed: provider.togglePasswordVisibility,
             ),
+            validator: (v) =>
+                v == null || v.isEmpty ? 'Please enter a password' : null,
           ),
           const SizedBox(height: 8),
 
@@ -76,10 +78,13 @@ class RegisterForm extends StatelessWidget {
                 provider.isConfirmPasswordVisible
                     ? Icons.visibility_off
                     : Icons.visibility,
-                color: AppColors.primaryGreen,
+                color: AppColors.deepTeal,
               ),
               onPressed: provider.toggleConfirmPasswordVisibility,
             ),
+            validator: (v) => v == null || v.isEmpty
+                ? 'Please confirm your password'
+                : null,
           ),
         ],
       ),

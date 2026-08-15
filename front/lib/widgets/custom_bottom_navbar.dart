@@ -15,36 +15,48 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.ivory,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(28),
+          topRight: Radius.circular(28),
+        ),
+        border: const Border(
+          top: BorderSide(color: AppColors.hairline, width: 1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -3),
+            color: AppColors.deepTeal.withOpacity(0.12),
+            blurRadius: 24,
+            offset: const Offset(0, -6),
           ),
         ],
       ),
       child: SafeArea(
+        top: false,
         child: GNav(
           gap: 8,
-          backgroundColor: Colors.white,
-          color: Colors.grey[600],
-          activeColor: AppColors.primaryGreen,
-          tabBackgroundColor: AppColors.primaryGreen.withOpacity(0.15),
+          curve: Curves.easeOutCubic,
+          duration: const Duration(milliseconds: 320),
+          backgroundColor: AppColors.ivory,
+          color: AppColors.textSecondary,
+          activeColor: AppColors.deepTeal,
+          iconSize: 22,
+          tabBackgroundColor: AppColors.tealSoft,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           selectedIndex: selectedIndex,
           onTabChange: onTabChange,
+          textStyle: const TextStyle(
+            color: AppColors.deepTeal,
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+          ),
           tabs: const [
-            GButton(icon: Icons.home_outlined, text: 'Home'),
-            GButton(icon: Icons.storefront_outlined, text: 'Store'),
-            GButton(icon: Icons.health_and_safety_outlined, text: 'Vet'),
-            GButton(icon: Icons.person_outline, text: 'Profile'),
+            GButton(icon: Icons.home_rounded, text: 'Home'),
+            GButton(icon: Icons.storefront_rounded, text: 'Store'),
+            GButton(icon: Icons.health_and_safety_rounded, text: 'Vet'),
+            GButton(icon: Icons.person_rounded, text: 'Profile'),
           ],
         ),
       ),

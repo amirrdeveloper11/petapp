@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 import 'package:front/features/homepage/models/product_model.dart';
 import 'package:front/features/homepage/provider/wishlist_provider.dart';
 import 'package:front/features/store/provider/cart_provider.dart';
@@ -23,15 +24,15 @@ class ProductDetailsPage extends StatelessWidget {
     final isWishlisted = wishlist.isInWishlist(product.id);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.cream,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             pinned: true,
             expandedHeight: 380,
             automaticallyImplyLeading: false,
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
+            backgroundColor: AppColors.cream,
+            surfaceTintColor: AppColors.cream,
             flexibleSpace: FlexibleSpaceBar(
               background: ProductDetailsHeader(
                 product: product,

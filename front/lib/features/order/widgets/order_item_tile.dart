@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:front/core/theme.dart';
 import 'package:front/features/homepage/service/app_network_image.dart';
 
 class OrderItemTile extends StatelessWidget {
@@ -32,7 +33,7 @@ class OrderItemTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppRadii.md),
               child: SizedBox(
                 width: 64,
                 height: 64,
@@ -40,11 +41,20 @@ class OrderItemTile extends StatelessWidget {
                     ? AppNetworkImage(
                         url: image,
                         fit: BoxFit.cover,
-                        errorWidget: const Icon(Icons.image_not_supported_outlined),
+                        errorWidget: Container(
+                          color: AppColors.tealSoft,
+                          child: const Icon(
+                            Icons.image_not_supported_outlined,
+                            color: AppColors.teal,
+                          ),
+                        ),
                       )
                     : Container(
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                        child: const Icon(Icons.image_not_supported_outlined),
+                        color: AppColors.tealSoft,
+                        child: const Icon(
+                          Icons.image_not_supported_outlined,
+                          color: AppColors.teal,
+                        ),
                       ),
               ),
             ),
@@ -63,14 +73,15 @@ class OrderItemTile extends StatelessWidget {
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
                         height: 1.25,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       'Qty $quantity • ${currency.format(unitPrice)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: AppColors.textSecondary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -81,16 +92,17 @@ class OrderItemTile extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               currency.format(totalPrice),
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: AppColors.deepTeal,
+              ),
             ),
           ],
         ),
         if (showDivider) ...[
           const SizedBox(height: 14),
-          Divider(
-            height: 1,
-            color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.7),
-          ),
+          const Divider(height: 1, color: AppColors.hairline),
         ],
       ],
     );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:front/core/theme.dart';
+import 'package:front/widgets/app_card.dart';
 import 'package:front/widgets/custom_button.dart';
 import '../providers/doctor_booking_provider.dart';
 import '../widgets/booking_date_field.dart';
@@ -34,7 +36,7 @@ class DoctorBookingForm extends StatelessWidget {
               )
             else
               SizedBox(
-                height: 50,
+                height: 42,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: p.pets.length,
@@ -43,10 +45,42 @@ class DoctorBookingForm extends StatelessWidget {
                     final pet = p.pets[i];
                     final selected = p.selectedPet?.id == pet.id;
 
-                    return ChoiceChip(
-                      label: Text(pet.name),
-                      selected: selected,
-                      onSelected: (_) => p.selectPet(pet),
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => p.selectPet(pet),
+                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: selected
+                                ? AppColors.deepTeal
+                                : AppColors.ivory,
+                            borderRadius: BorderRadius.circular(
+                              AppRadii.pill,
+                            ),
+                            border: Border.all(
+                              color: selected
+                                  ? AppColors.deepTeal
+                                  : AppColors.hairline,
+                            ),
+                          ),
+                          child: Text(
+                            pet.name,
+                            style: TextStyle(
+                              color: selected
+                                  ? Colors.white
+                                  : AppColors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -102,17 +136,31 @@ class DoctorBookingForm extends StatelessWidget {
               initialValue: p.reason,
               maxLines: 3,
               onChanged: p.setReason,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
               decoration: InputDecoration(
                 hintText: 'Example: vaccination, checkup...',
+                filled: true,
+                fillColor: AppColors.ivory,
+                hintStyle: TextStyle(
+                  color: AppColors.textSecondary.withOpacity(0.8),
+                ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppRadii.md),
+                  borderSide: const BorderSide(color: AppColors.hairline),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppRadii.md),
+                  borderSide: const BorderSide(color: AppColors.hairline),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Colors.green, width: 1.5),
+                  borderRadius: BorderRadius.circular(AppRadii.md),
+                  borderSide: const BorderSide(
+                    color: AppColors.deepTeal,
+                    width: 1.5,
+                  ),
                 ),
               ),
             ),
@@ -168,18 +216,14 @@ class _HintCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Container(
-      width: double.infinity,
+    return AppCard(
+      color: AppColors.tealSoft,
+      bordered: false,
+      boxShadow: const [],
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest.withOpacity(0.35),
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Row(
         children: [
-          Icon(icon, color: cs.primary),
+          Icon(icon, color: AppColors.deepTeal),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -187,15 +231,18 @@ class _HintCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    color: cs.onSurface,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(color: cs.onSurfaceVariant, height: 1.4),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
                 ),
               ],
             ),
@@ -213,19 +260,15 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Container(
-      width: double.infinity,
+    return AppCard(
+      color: AppColors.dangerSoft,
+      bordered: false,
+      boxShadow: const [],
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: cs.errorContainer.withOpacity(0.45),
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Text(
         message,
-        style: TextStyle(
-          color: cs.onErrorContainer,
+        style: const TextStyle(
+          color: AppColors.danger,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -240,18 +283,17 @@ class _SuccessBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Container(
-      width: double.infinity,
+    return AppCard(
+      color: AppColors.successSoft,
+      bordered: false,
+      boxShadow: const [],
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: cs.primary.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Text(
         'Booked successfully. Appointment #$id',
-        style: TextStyle(color: cs.primary, fontWeight: FontWeight.w700),
+        style: const TextStyle(
+          color: AppColors.success,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

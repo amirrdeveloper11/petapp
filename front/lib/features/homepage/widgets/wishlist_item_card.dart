@@ -4,6 +4,7 @@ import 'package:front/features/homepage/models/product_model.dart';
 import 'package:front/features/homepage/provider/wishlist_provider.dart';
 import 'package:front/features/homepage/service/app_network_image.dart';
 import 'package:front/features/store/provider/cart_provider.dart';
+import 'package:front/widgets/app_card.dart';
 import 'package:front/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
@@ -19,19 +20,8 @@ class WishlistItemCard extends StatelessWidget {
     final image = product.imageUrl?.trim();
     final canAddToCart = product.stock > 0;
 
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -45,13 +35,19 @@ class WishlistItemCard extends StatelessWidget {
                       url: image,
                       fit: BoxFit.cover,
                       errorWidget: Container(
-                        color: AppColors.softBackground,
-                        child: const Icon(Icons.image_not_supported_outlined),
+                        color: AppColors.tealSoft,
+                        child: const Icon(
+                          Icons.image_not_supported_outlined,
+                          color: AppColors.teal,
+                        ),
                       ),
                     )
                   : Container(
-                      color: AppColors.softBackground,
-                      child: const Icon(Icons.image_not_supported_outlined),
+                      color: AppColors.tealSoft,
+                      child: const Icon(
+                        Icons.image_not_supported_outlined,
+                        color: AppColors.teal,
+                      ),
                     ),
             ),
           ),
@@ -72,6 +68,7 @@ class WishlistItemCard extends StatelessWidget {
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
                           height: 1.2,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -88,7 +85,7 @@ class WishlistItemCard extends StatelessWidget {
                   '${product.price.toStringAsFixed(2)} ل.س',
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: AppColors.primaryGreenDark,
+                    color: AppColors.deepTeal,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -97,7 +94,9 @@ class WishlistItemCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: product.stock > 0 ? Colors.green : Colors.red,
+                    color: product.stock > 0
+                        ? AppColors.success
+                        : AppColors.danger,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -106,6 +105,7 @@ class WishlistItemCard extends StatelessWidget {
                   height: 44,
                   child: CustomButton(
                     text: canAddToCart ? 'Add to cart' : 'Out of stock',
+                    icon: canAddToCart ? Icons.shopping_cart_rounded : null,
                     onPressed: canAddToCart
                         ? () {
                             cart.addProduct(product);

@@ -22,9 +22,9 @@ class ProductQuantityStepper extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.softBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primaryGreen.withOpacity(0.08)),
+        color: AppColors.tealSoft,
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        border: Border.all(color: AppColors.deepTeal.withOpacity(0.1)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -45,7 +45,7 @@ class ProductQuantityStepper extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textDark,
+                color: AppColors.textPrimary,
               ),
             ),
           ),
@@ -78,7 +78,7 @@ class _StepButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadii.sm),
         child: SizedBox(
           width: 36,
           height: 36,
@@ -88,8 +88,8 @@ class _StepButton extends StatelessWidget {
             color: !enabled
                 ? AppColors.muted.withOpacity(0.45)
                 : isDanger
-                ? Colors.red
-                : AppColors.primaryGreenDark,
+                ? AppColors.danger
+                : AppColors.deepTeal,
           ),
         ),
       ),

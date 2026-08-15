@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 
 Future<bool> showAppConfirmDialog({
   required BuildContext context,
@@ -11,17 +12,24 @@ Future<bool> showAppConfirmDialog({
   final result = await showDialog<bool>(
     context: context,
     builder: (dialogContext) {
-      final cs = Theme.of(dialogContext).colorScheme;
-
       return AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        backgroundColor: AppColors.ivory,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadii.lg),
+        ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.w800),
+          style: const TextStyle(
+            fontWeight: FontWeight.w800,
+            color: AppColors.textPrimary,
+          ),
         ),
         content: Text(
           message,
-          style: TextStyle(color: cs.onSurfaceVariant, height: 1.45),
+          style: TextStyle(
+            color: AppColors.textSecondary.withOpacity(0.95),
+            height: 1.45,
+          ),
         ),
         actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
         actions: [
@@ -29,16 +37,20 @@ Future<bool> showAppConfirmDialog({
             onPressed: () => Navigator.pop(dialogContext, false),
             child: Text(
               cancelText,
-              style: const TextStyle(fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
             style: FilledButton.styleFrom(
-              backgroundColor: destructive ? cs.error : cs.primary,
+              backgroundColor:
+                  destructive ? AppColors.danger : AppColors.deepTeal,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppRadii.sm),
               ),
             ),
             child: Text(

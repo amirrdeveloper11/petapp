@@ -43,8 +43,8 @@ class _LoadingDotsState extends State<LoadingDots>
         width: 12,
         height: 12,
         margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(
-          color: AppColors.primaryGreen,
+        decoration: const BoxDecoration(
+          color: AppColors.deepTeal,
           shape: BoxShape.circle,
         ),
       ),

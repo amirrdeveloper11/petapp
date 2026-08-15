@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 import 'package:front/features/locations/model/delivery_address_model.dart';
 import 'package:front/features/locations/provider/delivery_address_provider.dart';
 import 'package:front/features/locations/widgets/delivery_address_picker_sheet.dart';
@@ -9,6 +10,7 @@ import 'package:front/features/order/widgets/order_summary_card.dart';
 import 'package:front/features/order/widgets/payment_method_selector.dart';
 import 'package:front/features/store/provider/cart_provider.dart';
 import 'package:front/routes/app_routes.dart';
+import 'package:front/widgets/app_card.dart';
 import 'package:front/widgets/app_empty_state.dart';
 import 'package:front/widgets/custom_button.dart';
 import 'package:intl/intl.dart';
@@ -120,39 +122,42 @@ class _CheckoutPageState extends State<CheckoutPage> {
         width: double.infinity,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Theme.of(
-            context,
-          ).colorScheme.surfaceContainerHighest.withOpacity(0.35),
-          borderRadius: BorderRadius.circular(18),
+          color: AppColors.tealSoft,
+          borderRadius: BorderRadius.circular(AppRadii.md),
         ),
         child: const Text(
           'No saved address selected',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textSecondary,
+          ),
         ),
       );
     }
-
-    final cs = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: cs.primary.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: cs.primary.withOpacity(0.15)),
+        color: AppColors.tealSoft,
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        border: Border.all(color: AppColors.deepTeal.withOpacity(0.18)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              Icon(Icons.location_on_rounded, color: cs.primary, size: 20),
-              const SizedBox(width: 8),
+              Icon(
+                Icons.location_on_rounded,
+                color: AppColors.deepTeal,
+                size: 20,
+              ),
+              SizedBox(width: 8),
               Text(
                 'Selected address',
                 style: TextStyle(
-                  color: cs.primary,
+                  color: AppColors.deepTeal,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -161,23 +166,30 @@ class _CheckoutPageState extends State<CheckoutPage> {
           const SizedBox(height: 10),
           Text(
             _selectedAddress!.deliveryAddress,
-            style: const TextStyle(fontWeight: FontWeight.w600, height: 1.45),
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              height: 1.45,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             '${_selectedAddress!.city} • ${_selectedAddress!.area}',
-            style: TextStyle(color: cs.onSurfaceVariant),
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 4),
           Text(
             _selectedAddress!.contactPhone,
-            style: TextStyle(color: cs.onSurfaceVariant),
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
           if ((_selectedAddress!.notes ?? '').trim().isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               _selectedAddress!.notes!,
-              style: TextStyle(color: cs.onSurfaceVariant, height: 1.4),
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                height: 1.4,
+              ),
             ),
           ],
         ],
@@ -193,13 +205,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return InputDecoration(
       labelText: label,
       hintText: hintText,
+      labelStyle: const TextStyle(color: AppColors.textSecondary),
       filled: true,
-      fillColor: Theme.of(
-        context,
-      ).colorScheme.surfaceContainerHighest.withOpacity(0.65),
+      fillColor: AppColors.ivory,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderSide: const BorderSide(color: AppColors.hairline),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderSide: const BorderSide(color: AppColors.hairline),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderSide: const BorderSide(color: AppColors.deepTeal, width: 1.5),
       ),
     );
   }
@@ -213,13 +232,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
       child: Consumer<OrderProvider>(
         builder: (context, provider, _) {
           return Scaffold(
+            backgroundColor: AppColors.cream,
             appBar: AppBar(
+              backgroundColor: AppColors.cream,
               title: const Text(
                 'Checkout',
-                style: TextStyle(fontWeight: FontWeight.w800),
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
               ),
               centerTitle: false,
+              iconTheme: const IconThemeData(color: AppColors.deepTeal),
               surfaceTintColor: Colors.transparent,
+              elevation: 0,
             ),
             body: cart.items.isEmpty
                 ? const AppEmptyState(
@@ -235,17 +261,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         const Text(
                           'Review your cart',
                           style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
+                            letterSpacing: -0.3,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           'Choose a saved location, select a payment method, and confirm the order.',
                           style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
+                            color: AppColors.textSecondary.withOpacity(0.95),
                             height: 1.45,
                           ),
                         ),
@@ -253,13 +279,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
                         ...cart.items.map((item) {
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 14),
-                            child: OrderItemTile(
-                              title: item.product.name,
-                              imageUrl: item.product.imageUrl,
-                              quantity: item.quantity,
-                              unitPrice: item.product.price,
-                              totalPrice: item.totalPrice,
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: AppCard(
+                              padding: const EdgeInsets.all(14),
+                              child: OrderItemTile(
+                                title: item.product.name,
+                                imageUrl: item.product.imageUrl,
+                                quantity: item.quantity,
+                                unitPrice: item.product.price,
+                                totalPrice: item.totalPrice,
+                                showDivider: false,
+                              ),
                             ),
                           );
                         }),
@@ -272,12 +302,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           note: _notesController.text,
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
                         const Text(
                           'Delivery location',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -286,21 +317,28 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           alignment: Alignment.centerLeft,
                           child: TextButton.icon(
                             onPressed: _chooseSavedAddress,
+                            style: TextButton.styleFrom(
+                              foregroundColor: AppColors.deepTeal,
+                            ),
                             icon: const Icon(Icons.location_on_rounded),
-                            label: const Text('Choose saved address'),
+                            label: const Text(
+                              'Choose saved address',
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
                           ),
                         ),
 
                         const SizedBox(height: 10),
                         _selectedAddressCard(context),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
 
                         const Text(
                           'Payment method',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -310,18 +348,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               setState(() => _paymentMethod = value),
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
                         const Text(
                           'Order notes',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 12),
                         TextFormField(
                           controller: _notesController,
                           maxLines: 4,
+                          style: const TextStyle(color: AppColors.textPrimary),
                           decoration: _fieldDecoration(
                             context,
                             label: 'Notes',
@@ -337,14 +377,26 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ? null
                 : SafeArea(
                     top: false,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                      decoration: BoxDecoration(
+                        color: AppColors.ivory,
+                        boxShadow: AppShadows.card,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(AppRadii.xl),
+                          topRight: Radius.circular(AppRadii.xl),
+                        ),
+                      ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             'Total ${NumberFormat.currency(symbol: 'ل.س ', decimalDigits: 2).format(cart.subTotal)}',
-                            style: const TextStyle(fontWeight: FontWeight.w800),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.deepTeal,
+                              fontSize: 16,
+                            ),
                           ),
                           const SizedBox(height: 12),
                           CustomButton(
@@ -355,6 +407,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 ? null
                                 : () => _submitOrder(context),
                             isLoading: provider.isSubmitting,
+                            icon: Icons.check_circle_rounded,
                           ),
                         ],
                       ),

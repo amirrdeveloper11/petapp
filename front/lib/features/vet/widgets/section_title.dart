@@ -21,16 +21,17 @@ class SectionTitle extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w800,
-            color: AppColors.textDark,
+            color: AppColors.textPrimary,
+            letterSpacing: -0.2,
           ),
         ),
         const SizedBox(height: 3),
         Text(
           subtitle,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textSecondary,
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textSecondary.withOpacity(0.9),
           ),
         ),
       ],

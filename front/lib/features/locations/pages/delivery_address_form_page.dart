@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:front/core/theme.dart';
 import 'package:front/widgets/custom_button.dart';
 import 'package:front/widgets/custom_text_field.dart';
 import '../model/delivery_address_model.dart';
@@ -93,14 +94,21 @@ class _DeliveryAddressFormPageState extends State<DeliveryAddressFormPage> {
     return InputDecoration(
       labelText: label,
       hintText: hintText,
+      labelStyle: const TextStyle(color: AppColors.textSecondary),
+      hintStyle: TextStyle(color: AppColors.textSecondary.withOpacity(0.7)),
       filled: true,
-      fillColor: Theme.of(context)
-          .colorScheme
-          .surfaceContainerHighest
-          .withOpacity(0.65),
+      fillColor: AppColors.ivory,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderSide: const BorderSide(color: AppColors.hairline),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderSide: const BorderSide(color: AppColors.hairline),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderSide: const BorderSide(color: AppColors.deepTeal, width: 1.5),
       ),
     );
   }
@@ -110,8 +118,19 @@ class _DeliveryAddressFormPageState extends State<DeliveryAddressFormPage> {
     final provider = context.watch<DeliveryAddressProvider>();
 
     return Scaffold(
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        title: Text(_isEdit ? 'Edit Address' : 'Add Address'),
+        backgroundColor: AppColors.cream,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.deepTeal),
+        title: Text(
+          _isEdit ? 'Edit Address' : 'Add Address',
+          style: const TextStyle(
+            fontWeight: FontWeight.w800,
+            color: AppColors.textPrimary,
+          ),
+        ),
       ),
       body: Form(
         key: _formKey,

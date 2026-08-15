@@ -14,22 +14,44 @@ class AppointmentDoctorModel {
   });
 
   factory AppointmentDoctorModel.fromJson(Map<String, dynamic> json) {
-    final specialty = json['specialty'];
+    final specialtyRaw = json['specialty'];
+    final specialtyName = specialtyRaw is Map<String, dynamic>
+        ? specialtyRaw['name']
+        : json['specialty_name'] ?? json['specialtyName'];
 
     return AppointmentDoctorModel(
-      id: int.tryParse('${json['id']}') ?? 0,
-      fullName:
-          json['full_name'] ?? json['fullName'] ?? json['name'] ?? 'Doctor',
-      consultationFee:
-          double.tryParse(
-            '${json['consultation_fee'] ?? json['consultationFee'] ?? 0}',
-          ) ??
-          0,
-      specialtyName: specialty is Map
-          ? specialty['name']?.toString()
-          : json['specialty_name']?.toString() ??
-                json['specialtyName']?.toString(),
+      id: _toInt(json['id']),
+      fullName: _toString(
+        json['full_name'] ?? json['fullName'] ?? json['name'],
+        fallback: 'Doctor',
+      ),
+      consultationFee: _toDouble(
+        json['consultation_fee'] ?? json['consultationFee'],
+      ),
+      specialtyName: _toStringNullable(specialtyName),
     );
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static double _toDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    return double.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static String _toString(dynamic value, {String fallback = ''}) {
+    final text = value?.toString().trim() ?? '';
+    return text.isEmpty ? fallback : text;
+  }
+
+  static String? _toStringNullable(dynamic value) {
+    final text = value?.toString().trim() ?? '';
+    return text.isEmpty ? null : text;
   }
 }
 
@@ -55,7 +77,7 @@ class AppointmentModel {
     required this.appointmentTime,
     required this.durationMinutes,
     required this.status,
-    required this.isExpired,
+    this.isExpired = false,
     required this.canReschedule,
     required this.canCancel,
     this.reason,
@@ -67,55 +89,62 @@ class AppointmentModel {
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
-    final status = '${json['status'] ?? ''}';
+    final petRaw = _mapFrom(json, const ['pet', 'pet_profile', 'petProfile']);
+    final doctorRaw = _mapFrom(json, const [
+      'doctor',
+      'doctor_profile',
+      'doctorProfile',
+    ]);
 
-    final date = _normalizeDate(json['appointment_date'] ?? json['date']);
+    final status = _toString(json['status']);
+    final appointmentDate = _normalizeDate(
+      json['appointment_date'] ?? json['date'] ?? json['appointmentDate'],
+    );
+    final appointmentTime = _normalizeTime(
+      json['appointment_time'] ?? json['time'] ?? json['appointmentTime'],
+    );
+    final durationMinutes = _toInt(
+      json['duration_minutes'] ?? json['durationMinutes'],
+      fallback: 30,
+    );
 
-    final time = _normalizeTime(json['appointment_time'] ?? json['time']);
+    final isExpired =
+        json.containsKey('is_expired') || json.containsKey('effective_status')
+        ? (_toBool(json['is_expired']) ||
+              _toString(json['effective_status']).toLowerCase() == 'expired')
+        : _isPendingLike(status) &&
+              _computeIsPastDue(
+                appointmentDate,
+                appointmentTime,
+                durationMinutes,
+              );
 
-    final duration = int.tryParse('${json['duration_minutes'] ?? 30}') ?? 30;
-
-    final expired =
-        json['is_expired'] == true ||
-        '${json['effective_status'] ?? ''}'.toLowerCase() == 'expired' ||
-        (_isPending(status) && _isPastDue(date, time, duration));
+    final apiCanReschedule = _toBool(json['can_reschedule']);
+    final apiCanCancel = _toBool(json['can_cancel']);
+    final localPendingFallback = !isExpired && _isPendingLike(status);
 
     return AppointmentModel(
-      id: int.tryParse('${json['id']}') ?? 0,
-      appointmentDate: date,
-      appointmentTime: time,
-      durationMinutes: duration,
+      id: _toInt(json['id']),
+      appointmentDate: appointmentDate,
+      appointmentTime: appointmentTime,
+      durationMinutes: durationMinutes,
       status: status,
-      isExpired: expired,
+      isExpired: isExpired,
 
-      canReschedule:
-          json['can_reschedule'] == true || (!expired && _isPending(status)),
-
-      canCancel: json['can_cancel'] == true || (!expired && _isPending(status)),
-
-      reason: _nullable(json['reason']),
-
-      consultationNotes: _nullable(
+      canReschedule: apiCanReschedule || localPendingFallback,
+      canCancel: apiCanCancel || localPendingFallback,
+      reason: _toStringNullable(json['reason']),
+      consultationNotes: _toStringNullable(
         json['consultation_notes'] ?? json['consultationNotes'],
       ),
-
-      rejectionReason: _nullable(
+      rejectionReason: _toStringNullable(
         json['rejection_reason'] ?? json['rejectionReason'],
       ),
-
-      createdAt: DateTime.tryParse(
-        '${json['created_at'] ?? json['createdAt'] ?? ''}',
-      ),
-
-      pet: json['pet'] is Map
-          ? PetModel.fromJson(Map<String, dynamic>.from(json['pet']))
-          : null,
-
-      doctor: json['doctor'] is Map
-          ? AppointmentDoctorModel.fromJson(
-              Map<String, dynamic>.from(json['doctor']),
-            )
-          : null,
+      createdAt: _toDateTimeNullable(json['created_at'] ?? json['createdAt']),
+      pet: petRaw == null ? null : PetModel.fromJson(petRaw),
+      doctor: doctorRaw == null
+          ? null
+          : AppointmentDoctorModel.fromJson(doctorRaw),
     );
   }
 
@@ -152,115 +181,140 @@ class AppointmentModel {
   }
 
   bool get canRescheduleAction => canReschedule && !isTerminal;
-
   bool get canCancelAction => canCancel && !isTerminal;
-
-  bool get isTerminal =>
-      isExpired ||
-      _isCompleted(status) ||
-      _isCancelled(status) ||
-      _isRejected(status);
 
   String get displayStatus => isExpired ? 'expired' : status;
 
-  static bool _isPending(String status) {
-    final value = status.toLowerCase();
+  bool get isTerminal =>
+      isExpired ||
+      _isCompletedLike(status) ||
+      _isCancelledLike(status) ||
+      _isRejectedLike(status);
 
-    return value.contains('pending') ||
-        value.contains('request') ||
-        value.contains('await');
+  static Map<String, dynamic>? _mapFrom(
+    Map<String, dynamic> json,
+    List<String> keys,
+  ) {
+    for (final key in keys) {
+      final value = json[key];
+      if (value is Map<String, dynamic>) return value;
+    }
+    return null;
   }
 
-  static bool _isCompleted(String status) {
-    final value = status.toLowerCase();
-
-    return value.contains('complete') || value.contains('done');
+  static bool _isPendingLike(String value) {
+    final s = value.trim().toLowerCase();
+    return s.contains('pending') ||
+        s.contains('request') ||
+        s.contains('await');
   }
 
-  static bool _isCancelled(String status) {
-    return status.toLowerCase().contains('cancel');
+  static bool _isCancelledLike(String value) {
+    final s = value.trim().toLowerCase();
+    return s.contains('cancel');
   }
 
-  static bool _isRejected(String status) {
-    final value = status.toLowerCase();
-
-    return value.contains('reject') || value.contains('declin');
+  static bool _isRejectedLike(String value) {
+    final s = value.trim().toLowerCase();
+    return s.contains('reject') || s.contains('declin');
   }
 
-  static bool _isPastDue(String date, String time, int duration) {
-    if (date.isEmpty || time.isEmpty) return false;
+  static bool _isCompletedLike(String value) {
+    final s = value.trim().toLowerCase();
+    return s.contains('complete') || s.contains('done');
+  }
 
-    final dateTime = DateTime.tryParse('$date $time');
+  static bool _computeIsPastDue(
+    String appointmentDate,
+    String appointmentTime,
+    int durationMinutes,
+  ) {
+    if (appointmentDate.isEmpty || appointmentTime.isEmpty) return false;
 
-    if (dateTime == null) return false;
+    final parts = appointmentTime.split(':');
+    if (parts.length < 2) return false;
 
-    return dateTime.add(Duration(minutes: duration)).isBefore(DateTime.now());
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    final datePart = DateTime.tryParse(appointmentDate);
+    if (hour == null || minute == null || datePart == null) return false;
+
+    final start = DateTime(
+      datePart.year,
+      datePart.month,
+      datePart.day,
+      hour,
+      minute,
+    );
+    final end = start.add(Duration(minutes: durationMinutes));
+
+    return end.isBefore(DateTime.now());
+  }
+
+  static int _toInt(dynamic value, {int fallback = 0}) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    return int.tryParse(value?.toString() ?? '') ?? fallback;
+  }
+
+  static bool _toBool(dynamic value) {
+    if (value is bool) return value;
+    final text = value?.toString().trim().toLowerCase() ?? '';
+    return text == '1' || text == 'true' || text == 'yes';
+  }
+
+  static String _toString(dynamic value) {
+    final text = value?.toString().trim() ?? '';
+    return text;
+  }
+
+  static String? _toStringNullable(dynamic value) {
+    final text = value?.toString().trim() ?? '';
+    return text.isEmpty ? null : text;
+  }
+
+  static DateTime? _toDateTimeNullable(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    return DateTime.tryParse(value.toString());
   }
 
   static String _normalizeDate(dynamic value) {
     final raw = value?.toString().trim() ?? '';
-
     if (raw.isEmpty) return '';
-
-    final date = DateTime.tryParse(raw);
-
-    if (date != null) {
-      return '${date.year}-${_pad(date.month)}-${_pad(date.day)}';
+    final parsed = DateTime.tryParse(raw);
+    if (parsed != null) {
+      return '${parsed.year}-${_pad2(parsed.month)}-${_pad2(parsed.day)}';
     }
-
     return raw.split('T').first.split(' ').first;
   }
 
   static String _normalizeTime(dynamic value) {
-    var raw = value?.toString().trim() ?? '';
-
+    final raw = value?.toString().trim() ?? '';
     if (raw.isEmpty) return '';
 
-    final match = RegExp(
-      r'^(\d{1,2}):(\d{2})(?::\d{2}(?:\.\d+)?)?\s*([AaPp][Mm])?$',
+    final parsed = RegExp(
+      r'^(\d{1,2}):(\d{2})(?::\d{2})?(?:\s*([AaPp][Mm]))?$',
     ).firstMatch(raw);
 
-    if (match != null) {
-      var hour = int.tryParse(match.group(1)!) ?? 0;
-      final minute = int.tryParse(match.group(2)!) ?? 0;
-      final period = match.group(3)?.toLowerCase();
+    if (parsed != null) {
+      var hour = int.tryParse(parsed.group(1) ?? '') ?? 0;
+      final minute = int.tryParse(parsed.group(2) ?? '') ?? 0;
+      final amPm = (parsed.group(3) ?? '').toLowerCase();
 
-      if (period == 'am' && hour == 12) {
-        hour = 0;
-      } else if (period == 'pm' && hour < 12) {
-        hour += 12;
-      }
+      if (amPm == 'am' && hour == 12) hour = 0;
+      if (amPm == 'pm' && hour < 12) hour += 12;
 
-      return '${_pad(hour)}:${_pad(minute)}';
+      return '${_pad2(hour)}:${_pad2(minute)}';
     }
 
-    final dateTime = DateTime.tryParse(raw);
-
-    if (dateTime != null) {
-      return '${_pad(dateTime.hour)}:${_pad(dateTime.minute)}';
-    }
-
-    final parts = raw.split(':');
-
-    if (parts.length >= 2) {
-      final hour = int.tryParse(parts[0]);
-      final minute = int.tryParse(parts[1]);
-
-      if (hour != null && minute != null) {
-        return '${_pad(hour)}:${_pad(minute)}';
-      }
+    final dt = DateTime.tryParse(raw);
+    if (dt != null) {
+      return '${_pad2(dt.hour)}:${_pad2(dt.minute)}';
     }
 
     return raw;
   }
 
-  static String _pad(int value) {
-    return value.toString().padLeft(2, '0');
-  }
-
-  static String? _nullable(dynamic value) {
-    final text = value?.toString().trim() ?? '';
-
-    return text.isEmpty ? null : text;
-  }
+  static String _pad2(int value) => value.toString().padLeft(2, '0');
 }

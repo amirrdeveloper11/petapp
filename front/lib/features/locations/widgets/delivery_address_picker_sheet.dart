@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:front/core/theme.dart';
+import 'package:front/widgets/app_empty_state.dart';
+
 import '../model/delivery_address_model.dart';
 import '../provider/delivery_address_provider.dart';
 
@@ -34,8 +37,10 @@ class _DeliveryAddressPickerSheetState
             child: Container(
               constraints: const BoxConstraints(maxHeight: 520),
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppRadii.xl),
+                ),
+                color: AppColors.ivory,
               ),
               child: Column(
                 children: [
@@ -44,8 +49,8 @@ class _DeliveryAddressPickerSheetState
                     width: 42,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.circular(99),
+                      color: AppColors.hairline,
+                      borderRadius: BorderRadius.circular(AppRadii.pill),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -58,6 +63,7 @@ class _DeliveryAddressPickerSheetState
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -65,33 +71,30 @@ class _DeliveryAddressPickerSheetState
                   const SizedBox(height: 12),
                   Expanded(
                     child: provider.loading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.teal,
+                            ),
+                          )
                         : provider.addresses.isEmpty
-                            ? const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(24),
-                                  child: Text(
-                                    'No saved addresses yet.\nAdd one from My Addresses.',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              )
-                            : ListView.separated(
-                                padding: const EdgeInsets.all(16),
-                                itemCount: provider.addresses.length,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 12),
-                                itemBuilder: (context, index) {
-                                  final address = provider.addresses[index];
-                                  return _AddressPickTile(
-                                    address: address,
-                                    onTap: () => Navigator.pop(
-                                      context,
-                                      address,
-                                    ),
-                                  );
-                                },
-                              ),
+                        ? const AppEmptyState(
+                            icon: Icons.location_off_rounded,
+                            title: 'No saved addresses yet',
+                            subtitle: 'Add one from My Addresses.',
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: provider.addresses.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final address = provider.addresses[index];
+                              return _AddressPickTile(
+                                address: address,
+                                onTap: () => Navigator.pop(context, address),
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),
@@ -107,29 +110,53 @@ class _AddressPickTile extends StatelessWidget {
   final DeliveryAddressModel address;
   final VoidCallback onTap;
 
-  const _AddressPickTile({
-    required this.address,
-    required this.onTap,
-  });
+  const _AddressPickTile({required this.address, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-      child: ListTile(
+    return Material(
+      color: AppColors.tealSoft,
+      borderRadius: BorderRadius.circular(AppRadii.lg),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppRadii.lg),
         onTap: onTap,
-        leading: const Icon(Icons.location_on_rounded),
-        title: Text(
-          address.city,
-          style: const TextStyle(fontWeight: FontWeight.w700),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.location_on_rounded,
+                color: AppColors.deepTeal,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      address.city,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${address.area}\n${address.deliveryAddress}',
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        subtitle: Text(
-          '${address.area}\n${address.deliveryAddress}',
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-        ),
-        isThreeLine: true,
       ),
     );
   }

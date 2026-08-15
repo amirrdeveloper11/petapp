@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:front/core/theme.dart';
+import 'package:front/widgets/app_empty_state.dart';
+import 'package:front/widgets/app_loading_states.dart';
+
 import '../models/appointment_model.dart';
 import '../pages/appointment_details_page.dart';
 import '../providers/appointment_provider.dart';
 import '../widgets/appointment_card.dart';
-import 'package:front/widgets/app_empty_state.dart';
-import 'package:front/widgets/app_shimmer.dart';
-import 'package:front/widgets/custom_button.dart';
 
 class AppointmentHistoryPage extends StatefulWidget {
   const AppointmentHistoryPage({super.key});
@@ -54,14 +55,22 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
       child: Consumer<AppointmentProvider>(
         builder: (context, provider, _) {
           return Scaffold(
+            backgroundColor: AppColors.cream,
             appBar: AppBar(
+              backgroundColor: AppColors.cream,
               title: const Text(
                 'My Appointments',
-                style: TextStyle(fontWeight: FontWeight.w800),
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
               ),
+              iconTheme: const IconThemeData(color: AppColors.deepTeal),
               surfaceTintColor: Colors.transparent,
+              elevation: 0,
             ),
             body: RefreshIndicator(
+              color: AppColors.teal,
               onRefresh: provider.refresh,
               child: _buildBody(context, provider),
             ),
@@ -73,12 +82,7 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
 
   Widget _buildBody(BuildContext context, AppointmentProvider provider) {
     if (provider.isLoading && provider.appointments.isEmpty) {
-      return ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: 5,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (_, __) => const AppShimmer(height: 110, width: double.infinity),
-      );
+      return const AppListShimmer();
     }
 
     if (provider.error != null && provider.appointments.isEmpty) {
@@ -89,18 +93,18 @@ class _AppointmentHistoryPageState extends State<AppointmentHistoryPage> {
             icon: Icons.error_outline_rounded,
             title: 'Could not load appointments',
             subtitle: provider.error!,
+            actionLabel: 'Retry',
+            onAction: provider.fetchAppointments,
           ),
-          const SizedBox(height: 16),
-          CustomButton(text: 'Retry', onPressed: provider.fetchAppointments),
         ],
       );
     }
 
     if (provider.appointments.isEmpty) {
-      return  ListView(
-        physics: AlwaysScrollableScrollPhysics(),
-        children: [
-          SizedBox(height: 120),
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: const [
+          SizedBox(height: 100),
           AppEmptyState(
             icon: Icons.event_busy_rounded,
             title: 'No appointments yet',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 import 'package:front/features/locations/model/delivery_address_model.dart';
 import 'package:provider/provider.dart';
 import 'package:front/widgets/app_confirm_dialog.dart';
@@ -65,23 +66,39 @@ class _DeliveryAddressesPageState extends State<DeliveryAddressesPage> {
     return Consumer<DeliveryAddressProvider>(
       builder: (context, provider, _) {
         return Scaffold(
+          backgroundColor: AppColors.cream,
           appBar: AppBar(
+            backgroundColor: AppColors.cream,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: AppColors.deepTeal),
             title: const Text(
               'My Addresses',
-              style: TextStyle(fontWeight: FontWeight.w800),
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
 
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _openForm(),
+            backgroundColor: AppColors.deepTeal,
+            foregroundColor: Colors.white,
             icon: const Icon(Icons.add_rounded),
-            label: const Text('Add address'),
+            label: const Text(
+              'Add address',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
           ),
 
           body: RefreshIndicator(
+            color: AppColors.teal,
             onRefresh: provider.fetchAddresses,
             child: provider.loading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: CircularProgressIndicator(color: AppColors.teal),
+                  )
                 : provider.addresses.isEmpty
                 ? ListView(
                     physics: const AlwaysScrollableScrollPhysics(),

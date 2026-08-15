@@ -15,27 +15,28 @@ class TimeSlotChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = selected ? AppColors.primaryGreen : Colors.grey.shade300;
-    final backgroundColor = selected ? AppColors.primaryGreen : Colors.white;
+    final backgroundColor = selected ? AppColors.deepTeal : AppColors.ivory;
+    final borderColor = selected ? AppColors.deepTeal : AppColors.hairline;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadii.sm),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(AppRadii.sm),
             border: Border.all(color: borderColor),
+            boxShadow: selected ? AppShadows.soft : null,
           ),
           child: Text(
             label,
             style: TextStyle(
               color: selected ? Colors.white : AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),

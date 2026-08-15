@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 
 class AppLabeledValue extends StatelessWidget {
   final String label;
@@ -16,8 +17,6 @@ class AppLabeledValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -27,9 +26,9 @@ class AppLabeledValue extends StatelessWidget {
             flex: 4,
             child: Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
-                color: cs.onSurfaceVariant,
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -44,7 +43,7 @@ class AppLabeledValue extends StatelessWidget {
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   fontSize: 14,
-                  color: cs.onSurface,
+                  color: AppColors.textPrimary,
                   fontWeight: valueBold ? FontWeight.w800 : FontWeight.w500,
                 ),
               ),

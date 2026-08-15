@@ -9,18 +9,26 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
+    final initial = (user?.fullName.trim().isNotEmpty ?? false)
+        ? user!.fullName.trim().substring(0, 1).toUpperCase()
+        : 'U';
 
     return Row(
       children: [
-        CircleAvatar(
-          radius: 40,
-          backgroundColor: AppColors.primaryGreen,
+        Container(
+          width: 76,
+          height: 76,
+          decoration: const BoxDecoration(
+            color: AppColors.deepTeal,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
           child: Text(
-            user?.fullName.substring(0, 1).toUpperCase() ?? 'U',
+            initial,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 28,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ),
@@ -31,16 +39,25 @@ class ProfileHeader extends StatelessWidget {
             children: [
               Text(
                 user?.fullName ?? 'Unknown User',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDark,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.2,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 user?.email ?? '',
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary.withOpacity(0.9),
+                ),
               ),
             ],
           ),

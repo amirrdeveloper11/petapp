@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 import 'package:front/widgets/custom_button.dart';
 
 import '../models/appointment_model.dart';
@@ -175,7 +176,15 @@ class _AppointmentRescheduleSheetState
     final dates = _availableDates();
     final slots = _slotsForSelectedDate();
 
-    return SafeArea(
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: AppColors.ivory,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(AppRadii.xl),
+          topRight: Radius.circular(AppRadii.xl),
+        ),
+      ),
+      child: SafeArea(
       child: Padding(
         padding: EdgeInsets.only(
           left: 16,
@@ -186,7 +195,9 @@ class _AppointmentRescheduleSheetState
         child: _loading
             ? const SizedBox(
                 height: 280,
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(
+                  child: CircularProgressIndicator(color: AppColors.teal),
+                ),
               )
             : _error != null
             ? SizedBox(height: 220, child: Center(child: Text(_error!)))
@@ -201,7 +212,11 @@ class _AppointmentRescheduleSheetState
                 children: [
                   const Text(
                     'Reschedule appointment',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   SizedBox(
@@ -228,15 +243,20 @@ class _AppointmentRescheduleSheetState
                   if (_scheduleLoading)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.teal,
+                        ),
+                      ),
                     )
                   else ...[
                     if (_scheduleError != null) ...[
                       Text(
                         _scheduleError!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
+                        style: const TextStyle(
+                          color: AppColors.danger,
                           fontSize: 13,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -260,6 +280,7 @@ class _AppointmentRescheduleSheetState
                   ),
                 ],
               ),
+      ),
       ),
     );
   }

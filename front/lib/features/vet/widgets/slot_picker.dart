@@ -22,12 +22,16 @@ class SlotPicker extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.softBackground,
-          borderRadius: BorderRadius.circular(16),
+          color: AppColors.tealSoft,
+          borderRadius: BorderRadius.circular(AppRadii.md),
         ),
         child: const Text(
           'No available slots for this day.',
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+          style: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       );
     }

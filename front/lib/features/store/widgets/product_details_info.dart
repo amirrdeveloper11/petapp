@@ -17,23 +17,34 @@ class ProductDetailsInfo extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cream,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(28),
-          topRight: Radius.circular(28),
+          topLeft: Radius.circular(AppRadii.xl),
+          topRight: Radius.circular(AppRadii.xl),
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+        padding: const EdgeInsets.fromLTRB(20, 22, 20, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: AppColors.hairline,
+                borderRadius: BorderRadius.circular(AppRadii.pill),
+              ),
+            ),
             Text(
               product.name,
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 22,
                 fontWeight: FontWeight.w800,
                 height: 1.2,
+                color: AppColors.textPrimary,
+                letterSpacing: -0.3,
               ),
             ),
             const SizedBox(height: 10),
@@ -43,10 +54,10 @@ class ProductDetailsInfo extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: AppColors.primaryGreenDark,
+                color: AppColors.deepTeal,
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -66,12 +77,13 @@ class ProductDetailsInfo extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
             const Text(
               'Description',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -89,22 +101,23 @@ class ProductDetailsInfo extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: AppColors.softBackground,
-                borderRadius: BorderRadius.circular(18),
+                color: AppColors.tealSoft,
+                borderRadius: BorderRadius.circular(AppRadii.md),
               ),
               child: const Row(
                 children: [
                   Icon(
                     Icons.local_shipping_rounded,
-                    color: AppColors.primaryGreen,
+                    color: AppColors.deepTeal,
                   ),
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Fast delivery and secure checkout experience.',
                       style: TextStyle(
-                        color: AppColors.textDark,
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w600,
+                        fontSize: 13,
                       ),
                     ),
                   ),
@@ -122,32 +135,28 @@ class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _InfoChip({
-    required this.icon,
-    required this.label,
-  });
+  const _InfoChip({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: AppColors.inputStroke.withOpacity(0.22),
-        ),
+        color: AppColors.ivory,
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(color: AppColors.hairline),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: AppColors.primaryGreenDark),
+          Icon(icon, size: 15, color: AppColors.deepTeal),
           const SizedBox(width: 6),
           Text(
             label,
             style: const TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
             ),
           ),
         ],

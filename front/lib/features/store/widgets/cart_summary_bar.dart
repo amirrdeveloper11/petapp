@@ -23,7 +23,7 @@ class CartSummaryBar extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.ivory,
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowLight,
@@ -32,8 +32,8 @@ class CartSummaryBar extends StatelessWidget {
           ),
         ],
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(AppRadii.xl),
+          topRight: Radius.circular(AppRadii.xl),
         ),
       ),
       child: Column(
@@ -55,7 +55,7 @@ class CartSummaryBar extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.primaryGreenDark,
+                  color: AppColors.deepTeal,
                 ),
               ),
             ],

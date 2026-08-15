@@ -3,6 +3,7 @@ import 'package:front/features/auth/splash/widgets/splash_logo.dart';
 import 'package:provider/provider.dart';
 import 'package:front/features/auth/splash/provider/splash_provider.dart';
 import 'package:front/core/theme.dart';
+import 'package:front/widgets/custom_button.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final provider = context.watch<SplashProvider>();
 
     return Scaffold(
-      backgroundColor: AppColors.primaryGreenLight,
+      backgroundColor: AppColors.cream,
       body: Center(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
@@ -39,62 +40,101 @@ class _SplashScreenState extends State<SplashScreen> {
     switch (provider.state) {
       case SplashState.loading:
         return Column(
+          key: const ValueKey('loading'),
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.pets, size: 90, color: AppColors.primaryGreen),
-            SizedBox(height: 25),
-            Text(
-              "Wanis",
+          children: [
+            Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                color: AppColors.tealSoft,
+                borderRadius: BorderRadius.circular(AppRadii.xl),
+                border: Border.all(color: AppColors.hairline),
+              ),
+              child: const Icon(
+                Icons.pets_rounded,
+                size: 46,
+                color: AppColors.deepTeal,
+              ),
+            ),
+            const SizedBox(height: 25),
+            const Text(
+              'Pawpal',
               style: TextStyle(
-                  color: AppColors.textDark,
-                  fontSize: 34,
-                  fontWeight: FontWeight.bold),
+                color: AppColors.textPrimary,
+                fontSize: 34,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              "Your Pet’s Best Friend",
-              style: TextStyle(fontSize: 16, color: Colors.black54),
+              "Your Pet's Best Friend",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary.withOpacity(0.9),
+              ),
             ),
-            SizedBox(height: 40),
-            LoadingDots(),
+            const SizedBox(height: 40),
+            const LoadingDots(),
           ],
         );
 
       case SplashState.error:
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.cloud_off, size: 70, color: Colors.red),
-            const SizedBox(height: 20),
-            const Text(
-              "Server Unavailable",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "Please check your internet connection and try again",
-              style: TextStyle(color: Colors.black54, fontSize: 15),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 25),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryGreen,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 35, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+        return Padding(
+          key: const ValueKey('error'),
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  color: AppColors.dangerSoft,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.cloud_off_rounded,
+                  size: 38,
+                  color: AppColors.danger,
                 ),
               ),
-              onPressed: () => provider.retry(context),
-              child:
-                  const Text("Try Again", style: TextStyle(fontSize: 18)),
-            ),
-          ],
+              const SizedBox(height: 20),
+              const Text(
+                'Server Unavailable',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Please check your internet connection and try again',
+                style: TextStyle(
+                  color: AppColors.textSecondary.withOpacity(0.95),
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: 200,
+                child: CustomButton(
+                  text: 'Try Again',
+                  onPressed: () => provider.retry(context),
+                  icon: Icons.refresh_rounded,
+                ),
+              ),
+            ],
+          ),
         );
 
       case SplashState.done:
-        return const SizedBox.shrink();
+        return const SizedBox.shrink(key: ValueKey('done'));
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/theme.dart';
 
 class AppStatusChip extends StatelessWidget {
   final String status;
@@ -8,23 +9,22 @@ class AppStatusChip extends StatelessWidget {
 
   Color _resolveColor(BuildContext context) {
     final normalized = status.trim().toLowerCase();
-    final cs = Theme.of(context).colorScheme;
 
-    if (normalized.contains('expired')) return cs.outline;
-    if (normalized.contains('cancel')) return cs.error;
+    if (normalized.contains('expired')) return AppColors.muted;
+    if (normalized.contains('cancel')) return AppColors.danger;
     if (normalized.contains('complete') || normalized.contains('done')) {
-      return Colors.green;
+      return AppColors.success;
     }
     if (normalized.contains('process')) return Colors.indigo;
-    if (normalized.contains('resched')) return Colors.deepPurple;
+    if (normalized.contains('resched')) return AppColors.gold;
     if (normalized.contains('confirm') || normalized.contains('accept')) {
-      return Colors.blue;
+      return AppColors.teal;
     }
     if (normalized.contains('pending') || normalized.contains('request')) {
-      return Colors.orange;
+      return Colors.orange.shade800;
     }
 
-    return cs.primary;
+    return AppColors.deepTeal;
   }
 
   String _prettyLabel() {
